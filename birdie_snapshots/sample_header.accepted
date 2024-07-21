@@ -1,0 +1,26 @@
+---
+version: 1.1.8
+title: Sample header
+file: ./test/sqlite/header_test.gleam
+test_name: header_read_test
+---
+Header(
+  4096,
+  Legacy,
+  Legacy,
+  0,
+  5,
+  4,
+  0,
+  0,
+  2,
+  SchemaFormat4,
+  0,
+  0,
+  Utf8,
+  0,
+  False,
+  0,
+  5,
+  3034000,
+)
