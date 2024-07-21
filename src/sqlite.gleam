@@ -1,5 +1,6 @@
 import argv
-import file_streams/read_stream
+import file_streams/file_open_mode
+import file_streams/file_stream
 import gleam/int.{to_string}
 import gleam/io
 
@@ -12,11 +13,12 @@ pub fn main() {
   // Uncomment this to pass the first stage
   case args {
     [database_file_path, ".dbinfo", ..] -> {
-      let assert Ok(rs) = read_stream.open(database_file_path)
+      let assert Ok(rs) =
+        file_stream.open(database_file_path, [file_open_mode.Read])
       // Skip the first 16 bytes
-      let assert Ok(_bytes) = read_stream.read_bytes_exact(rs, 16)
+      let assert Ok(_bytes) = file_stream.read_bytes_exact(rs, 16)
       // The next 2 bytes hold the page size in big-endian format
-      let assert Ok(page_size) = read_stream.read_uint16_be(rs)
+      let assert Ok(page_size) = file_stream.read_uint16_be(rs)
 
       io.print("database page size: ")
       io.println(to_string(page_size))
