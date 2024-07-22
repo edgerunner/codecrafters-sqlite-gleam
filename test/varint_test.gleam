@@ -63,3 +63,9 @@ pub fn parse_1180591620717411303423_test() {
   |> should.be_ok
   |> should.equal(1_180_591_620_717_411_303_423)
 }
+
+pub fn ignore_more_data_test() {
+  varint.parse(<<1:1, 64:7, 0:1, 64:7, 13_593:16>>)
+  |> should.be_ok
+  |> should.equal(8256)
+}
