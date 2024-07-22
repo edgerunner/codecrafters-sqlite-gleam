@@ -69,3 +69,16 @@ pub fn ignore_more_data_test() {
   |> should.be_ok
   |> should.equal(8256)
 }
+
+pub fn chain_multiple_varints_test() {
+  let data = <<
+    1:1, 64:7, 0:1, 64:7, 0:1, 100:7, 1:1, 127:7, 0:1, 100:7, 13_593:16,
+  >>
+  use first, more <- varint.then(data)
+  should.equal(first, 8256)
+  use second, more <- varint.then(more)
+  should.equal(second, 100)
+  use third, more <- varint.then(more)
+  should.equal(third, 16_356)
+  should.equal(more, <<13_593:16>>) |> Ok
+}

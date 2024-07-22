@@ -13,3 +13,11 @@ fn parse_(input: BitArray, big: Int) -> Result(#(Int, BitArray), Nil) {
     _ -> Error(Nil)
   }
 }
+
+pub fn then(
+  input: BitArray,
+  callback: fn(Int, BitArray) -> Result(a, Nil),
+) -> Result(a, Nil) {
+  use #(varint, more) <- result.then(parse_(input, 0))
+  callback(varint, more)
+}
