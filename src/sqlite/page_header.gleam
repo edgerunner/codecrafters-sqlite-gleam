@@ -1,11 +1,25 @@
 import file_streams/file_stream.{type FileStream}
+import gleam/list
 
 pub type PageHeader {
-  LeafTable(freeblock: Int, cells: Int, content: Int, fragmented: Int)
-  LeafIndex(freeblock: Int, cells: Int, content: Int, fragmented: Int)
+  LeafTable(
+    freeblock: Int,
+    cells: Int,
+    pointers: List(Int),
+    content: Int,
+    fragmented: Int,
+  )
+  LeafIndex(
+    freeblock: Int,
+    cells: Int,
+    pointers: List(Int),
+    content: Int,
+    fragmented: Int,
+  )
   InteriorTable(
     freeblock: Int,
     cells: Int,
+    pointers: List(Int),
     content: Int,
     fragmented: Int,
     right: Int,
@@ -13,6 +27,7 @@ pub type PageHeader {
   InteriorIndex(
     freeblock: Int,
     cells: Int,
+    pointers: List(Int),
     content: Int,
     fragmented: Int,
     right: Int,
@@ -51,7 +66,10 @@ fn read32(fs: FileStream) -> Int {
   int32
 }
 
-fn leaf(variant: fn(Int, Int, Int, Int) -> PageHeader, fs: FileStream) {
+fn leaf(
+  variant: fn(Int, Int, List(Int), Int, Int) -> PageHeader,
+  fs: FileStream,
+) {
   // 1	2	The two-byte integer at offset 1 gives the start of the first freeblock on the page,
   // or is zero if there are no freeblocks.
   let freeblock = read16(fs)
@@ -64,10 +82,18 @@ fn leaf(variant: fn(Int, Int, Int, Int) -> PageHeader, fs: FileStream) {
   // free bytes within the cell content area.
   let fragments = read8(fs)
 
-  variant(freeblock, cells, content, fragments)
+  // 8 2* The cell pointer index is an array of two-byte integers.
+  let pointers =
+    list.repeat(fs, cells)
+    |> list.map(read16)
+
+  variant(freeblock, cells, pointers, content, fragments)
 }
 
-fn interior(variant: fn(Int, Int, Int, Int, Int) -> PageHeader, fs: FileStream) {
+fn interior(
+  variant: fn(Int, Int, List(Int), Int, Int, Int) -> PageHeader,
+  fs: FileStream,
+) {
   // 1	2	The two-byte integer at offset 1 gives the start of the first freeblock on the page,
   // or is zero if there are no freeblocks.
   let freeblock = read16(fs)
@@ -84,5 +110,10 @@ fn interior(variant: fn(Int, Int, Int, Int, Int) -> PageHeader, fs: FileStream) 
   // omitted from all other pages.
   let right = read32(fs)
 
-  variant(freeblock, cells, content, fragments, right)
+  // 8 2* The cell pointer index is an array of two-byte integers.
+  let pointers =
+    list.repeat(fs, cells)
+    |> list.map(read16)
+
+  variant(freeblock, cells, pointers, content, fragments, right)
 }

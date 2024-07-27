@@ -4,4 +4,10 @@ title: Second page header
 file: ./test/sqlite/page_header_test.gleam
 test_name: second_page_header_test
 ---
-LeafTable(0, 4, 4001, 0)
+LeafTable(
+  0,
+  4,
+  [4067, 4054, 4029, 4001],
+  4001,
+  0,
+)
