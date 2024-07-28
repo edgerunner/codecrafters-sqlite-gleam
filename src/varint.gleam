@@ -1,3 +1,6 @@
+import file_streams/file_stream.{type FileStream}
+import gleam/iterator
+import gleam/list
 import gleam/pair
 import gleam/result
 
@@ -127,4 +130,22 @@ pub fn then(
 fn int(combined: BitArray) -> Int {
   let assert <<out:signed-big-64>> = combined
   out
+}
+
+pub fn read(fs: FileStream) -> Int {
+  iterator.repeat(fs)
+  |> iterator.take(9)
+  |> iterator.fold_until(from: <<>>, with: fn(bytes, fs) {
+    case file_stream.read_bytes(fs, 1) {
+      Ok(<<1:1, _:7>> as byte) -> list.Continue(<<bytes:bits, byte:bits>>)
+      Ok(<<0:1, _:7>> as byte) -> list.Stop(<<bytes:bits, byte:bits>>)
+      _ -> panic as "Could not read varint"
+    }
+  })
+  |> parse_or_panic
+}
+
+fn parse_or_panic(bits: BitArray) -> Int {
+  let assert Ok(result) = parse(bits)
+  result
 }

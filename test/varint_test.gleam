@@ -103,3 +103,76 @@ pub fn chain_multiple_varints_test() {
   should.equal(third, 16_356)
   should.equal(more, <<13_593:16>>) |> Ok
 }
+
+pub fn read_9_bytes_test() {
+  use fs <- stream()
+  varint.read(fs)
+  |> should.equal(6_100_498_040_124_418_645)
+}
+
+pub fn read_8_bytes_test() {
+  use fs <- stream()
+  let assert Ok(1) = file_stream.position(fs, file_stream.BeginningOfFile(1))
+  varint.read(fs)
+  |> should.equal(23_830_070_469_236_053)
+}
+
+pub fn read_7_bytes_test() {
+  use fs <- stream()
+  let assert Ok(2) = file_stream.position(fs, file_stream.BeginningOfFile(2))
+  varint.read(fs)
+  |> should.equal(186_172_425_540_949)
+}
+
+pub fn read_6_bytes_test() {
+  use fs <- stream()
+  let assert Ok(3) = file_stream.position(fs, file_stream.BeginningOfFile(3))
+  varint.read(fs)
+  |> should.equal(1_454_472_074_581)
+}
+
+pub fn read_5_bytes_test() {
+  use fs <- stream()
+  let assert Ok(4) = file_stream.position(fs, file_stream.BeginningOfFile(4))
+  varint.read(fs)
+  |> should.equal(11_363_063_125)
+}
+
+pub fn read_4_bytes_test() {
+  use fs <- stream()
+  let assert Ok(5) = file_stream.position(fs, file_stream.BeginningOfFile(5))
+  varint.read(fs)
+  |> should.equal(88_773_973)
+}
+
+pub fn read_3_bytes_test() {
+  use fs <- stream()
+  let assert Ok(6) = file_stream.position(fs, file_stream.BeginningOfFile(6))
+  varint.read(fs)
+  |> should.equal(693_589)
+}
+
+pub fn read_2_bytes_test() {
+  use fs <- stream()
+  let assert Ok(7) = file_stream.position(fs, file_stream.BeginningOfFile(7))
+  varint.read(fs)
+  |> should.equal(5461)
+}
+
+pub fn read_1_byte_test() {
+  use fs <- stream()
+  let assert Ok(8) = file_stream.position(fs, file_stream.BeginningOfFile(8))
+  varint.read(fs)
+  |> should.equal(85)
+}
+
+import file_streams/file_open_mode
+import file_streams/file_stream
+
+const varint_file_path = "varints.raw"
+
+pub fn stream(test_body: fn(file_stream.FileStream) -> Nil) {
+  let assert Ok(fs) = file_stream.open(varint_file_path, [file_open_mode.Read])
+  test_body(fs)
+  let assert Ok(_) = file_stream.close(fs)
+}
