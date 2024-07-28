@@ -4,7 +4,7 @@ import sample
 import sqlite/header
 
 pub fn header_read_test() {
-  use file <- sample.stream()
+  use file <- sample.stream(0)
 
   header.read(file)
   |> pprint.with_config(pprint.Config(
