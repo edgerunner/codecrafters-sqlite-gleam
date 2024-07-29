@@ -1,0 +1,15 @@
+---
+version: 1.1.8
+title: Cell 2
+file: ./test/sqlite/cell_test.gleam
+test_name: read_cell_2_test
+---
+Cell(
+  26,
+  4,
+  [
+    Null,
+    Text("Golden Delicious"),
+    Text("Yellow"),
+  ],
+)
