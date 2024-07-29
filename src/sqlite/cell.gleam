@@ -13,3 +13,8 @@ pub fn read(fs: FileStream) -> Cell {
   let record = record.read(fs)
   Cell(payload_size, row_id, record)
 }
+
+pub fn read_at(pos: Int, fs: FileStream) -> Cell {
+  let assert Ok(_) = file_stream.position(fs, file_stream.BeginningOfFile(pos))
+  read(fs)
+}

@@ -1,0 +1,51 @@
+---
+version: 1.1.8
+title: Schema dump
+file: ./test/sqlite_test.gleam
+test_name: schema_dump_test
+---
+[
+  Cell(
+    111,
+    1,
+    [
+      Text("table"),
+      Text("apples"),
+      Text("apples"),
+      Integer(2),
+      Text("CREATE TABLE apples
+(
+	id integer primary key autoincrement,
+	name text,
+	color text
+)"),
+    ],
+  ),
+  Cell(
+    80,
+    2,
+    [
+      Text("table"),
+      Text("sqlite_sequence"),
+      Text("sqlite_sequence"),
+      Integer(3),
+      Text("CREATE TABLE sqlite_sequence(name,seq)"),
+    ],
+  ),
+  Cell(
+    120,
+    3,
+    [
+      Text("table"),
+      Text("oranges"),
+      Text("oranges"),
+      Integer(4),
+      Text("CREATE TABLE oranges
+(
+	id integer primary key autoincrement,
+	name text,
+	description text
+)"),
+    ],
+  ),
+]
