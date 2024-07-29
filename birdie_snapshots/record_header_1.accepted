@@ -1,0 +1,7 @@
+---
+version: 1.1.8
+title: Record header 1
+file: ./test/sqlite/record_header_test.gleam
+test_name: read_record_header_1_test
+---
+[Text(6), Int8]

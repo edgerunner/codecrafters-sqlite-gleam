@@ -149,3 +149,18 @@ fn parse_or_panic(bits: BitArray) -> Int {
   let assert Ok(result) = parse(bits)
   result
 }
+
+pub fn byte_size(int: Int) -> Int {
+  case int {
+    neg if neg < 0x00 -> 9
+    v7 if v7 < 0x80 -> 1
+    v14 if v14 < 0x4000 -> 2
+    v21 if v21 < 0x200000 -> 3
+    v28 if v28 < 0x10000000 -> 4
+    v35 if v35 < 0x800000000 -> 5
+    v42 if v42 < 0x40000000000 -> 6
+    v49 if v49 < 0x2000000000000 -> 7
+    v56 if v56 < 0x100000000000000 -> 8
+    _v64 -> 9
+  }
+}
