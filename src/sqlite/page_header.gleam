@@ -1,5 +1,6 @@
 import file_streams/file_stream.{type FileStream}
 import gleam/list
+import sqlite/db_header
 
 pub type PageHeader {
   LeafTable(
@@ -116,4 +117,12 @@ fn interior(
     |> list.map(read16)
 
   variant(freeblock, cells, pointers, content, fragments, right)
+}
+
+pub fn offset(page_number p: Int, page_size s: Int) {
+  case p {
+    invalid if invalid < 1 -> panic as "Invalid page number"
+    1 -> db_header.length
+    p -> p * s - s
+  }
 }

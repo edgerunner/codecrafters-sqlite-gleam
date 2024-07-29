@@ -4,7 +4,7 @@ import sample
 import sqlite/page_header
 
 pub fn first_page_header_test() {
-  use fs <- sample.stream(100)
+  use fs <- sample.stream(page_header.offset(page_number: 1, page_size: 0x1000))
 
   page_header.read(fs)
   |> pprint.format
@@ -12,7 +12,7 @@ pub fn first_page_header_test() {
 }
 
 pub fn second_page_header_test() {
-  use fs <- sample.stream(0x1000)
+  use fs <- sample.stream(page_header.offset(page_number: 2, page_size: 0x1000))
 
   page_header.read(fs)
   |> pprint.format
