@@ -1,0 +1,11 @@
+---
+version: 1.1.8
+title: Record 2
+file: ./test/sqlite/record_test.gleam
+test_name: read_record_2_test
+---
+[
+  Null,
+  Text("Golden Delicious"),
+  Text("Yellow"),
+]
