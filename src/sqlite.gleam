@@ -5,9 +5,11 @@ import gleam/int.{to_string}
 import gleam/io
 import gleam/list
 import gleam/string
+import sql/parser.{Count, Select}
 import sqlite/cell
 import sqlite/db_header
 import sqlite/page_header
+import sqlite/schema
 import sqlite/value
 
 pub fn main() {
@@ -33,17 +35,14 @@ pub fn main() {
         file_stream.open(database_file_path, [file_open_mode.Read])
 
       let _db_header = db_header.read(fs)
-      let schema_page_header = page_header.read(fs)
+      let schema = schema.read(fs)
 
-      schema_page_header.pointers
-      |> list.map(fn(pos) {
-        let cell = cell.read_at(pos, fs)
-        let assert [_, value.Text(name), ..] = cell.record
-        name
-      })
+      schema.tables
+      |> list.map(fn(table) { table.name })
       |> string.join(" ")
       |> io.println
     }
+
     _ -> {
       io.println("Unknown command")
     }
