@@ -61,6 +61,9 @@ pub fn main() {
           |> int.to_string
           |> io.println
         }
+        parser.CreateTable(_, _) -> {
+          io.println_error("ERROR: Table creation not implemented yet")
+        }
       }
     }
     _ -> {

@@ -3,6 +3,7 @@ import party.{type ParseError, type Parser, do, try}
 
 pub type SQL {
   Select(Select, from: String)
+  CreateTable(name: String, columns: List(ColumnDefinition))
 }
 
 pub type Select {
@@ -13,21 +14,101 @@ pub type Error {
   UnknownCommand(String)
 }
 
+pub type ColumnDefinition {
+  ColumnDefinition(
+    name: String,
+    affinity: ColumnAffinity,
+    primary_key: PrimaryKey,
+  )
+}
+
+pub type ColumnAffinity {
+  Text
+  Integer
+  Numeric
+  Real
+  Blob
+}
+
+pub type PrimaryKey {
+  NotPrimaryKey
+  PrimaryKey
+  PrimaryWithAutoIncrement
+}
+
 pub fn parse(input: String) -> Result(SQL, ParseError(Error)) {
   party.go(sql(), input)
 }
 
-fn sql() -> Parser(SQL, Error) {
+pub fn sql() -> Parser(SQL, Error) {
+  party.choice([select_count(), create_table()])
+}
+
+fn select_count() -> Parser(SQL, Error) {
   use select <- do(command("SELECT", Select))
-  use _ <- do(party.whitespace1())
+  use _ <- do(space1())
   use count <- do(command("COUNT", Count))
   use _ <- do(party.string("(*)"))
-  use _ <- do(party.whitespace1())
+  use _ <- do(space1())
   use _ <- do(command("FROM", Nil))
-  use _ <- do(party.whitespace1())
+  use _ <- do(space1())
   use from <- do(identifier())
 
   party.return(select(count([]), from))
+}
+
+fn create_table() -> Parser(SQL, Error) {
+  use _ <- do(command("CREATE", Nil))
+  use _ <- do(space1())
+  use _ <- do(command("TABLE", Nil))
+  use _ <- do(space1())
+  use name <- do(identifier())
+  use _ <- do(space())
+  use columns <- do(parens(column_defs()))
+  party.return(CreateTable(name:, columns:))
+}
+
+fn column_defs() -> Parser(List(ColumnDefinition), Error) {
+  use defs <- do(party.sep(column_def(), by: list_comma()))
+  party.return(defs)
+}
+
+fn column_def() -> Parser(ColumnDefinition, Error) {
+  use name <- do(identifier())
+  use affinity <- do(affinity())
+  use primary_key <- do(primary_key())
+  party.return(ColumnDefinition(
+    name: name,
+    affinity: affinity,
+    primary_key: primary_key,
+  ))
+}
+
+fn affinity() -> Parser(ColumnAffinity, Error) {
+  {
+    use _ <- do(space1())
+    party.choice([
+      command("integer", Integer),
+      command("text", Text),
+      command("float", Real),
+    ])
+  }
+  |> party.either(party.return(Blob))
+}
+
+fn primary_key() -> Parser(PrimaryKey, Error) {
+  let autoincrement = fn() {
+    use _ <- do(space1())
+    command("autoincrement", PrimaryWithAutoIncrement)
+  }
+  let primary = fn() {
+    use _ <- do(space1())
+    use _ <- do(
+      party.all([command("primary", Nil), space1(), command("key", Nil)]),
+    )
+    party.either(autoincrement(), party.return(PrimaryKey))
+  }
+  party.either(primary(), party.return(NotPrimaryKey))
 }
 
 fn command(token: String, value: v) -> Parser(v, Error) {
@@ -40,6 +121,41 @@ fn command(token: String, value: v) -> Parser(v, Error) {
 
 fn identifier() {
   use first <- do(party.letter())
-  use rest <- do(party.many_concat(party.alphanum()))
+  use rest <- do(
+    party.many_concat(party.either(party.alphanum(), party.string("_"))),
+  )
   party.return(first <> rest)
+}
+
+fn parens(parser: Parser(a, e)) -> Parser(a, e) {
+  use _ <- do(party.string("("))
+  use _ <- do(space())
+  use inner <- do(parser)
+  use _ <- do(space())
+  use _ <- do(party.string(")"))
+  party.return(inner)
+}
+
+fn list_comma() -> Parser(Nil, e) {
+  use _ <- do(space())
+  use _ <- do(party.string(","))
+  use _ <- do(space())
+  party.return(Nil)
+}
+
+fn space() -> Parser(Nil, e) {
+  use _ <- do(party.many(spacer()))
+  party.return(Nil)
+}
+
+fn space1() -> Parser(Nil, e) {
+  use _ <- do(party.many1(spacer()))
+  party.return(Nil)
+}
+
+fn spacer() -> Parser(Nil, e) {
+  use _ <- do(
+    party.choice([party.whitespace1(), party.string("\n"), party.string("\t")]),
+  )
+  party.return(Nil)
 }
