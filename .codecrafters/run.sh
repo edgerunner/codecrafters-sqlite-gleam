@@ -8,4 +8,6 @@
 
 set -e # Exit on failure
 
-exec gleam run -- "$@"
+# TODO: Use --no-print-progress once https://github.com/gleam-lang/gleam/issues/2299 is implemented
+exec gleam run --module sqlite -- "$@" \
+    | grep -vE "Compiled|Running|=ERROR REPORT=|backend port|^\$"
