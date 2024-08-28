@@ -6,11 +6,9 @@ import gleam/io
 import gleam/list
 import gleam/string
 import sql/parser.{Count, Select}
-import sqlite/cell
 import sqlite/db_header
 import sqlite/page_header
 import sqlite/schema
-import sqlite/value
 
 pub fn main() {
   let args = argv.load().arguments
@@ -42,7 +40,29 @@ pub fn main() {
       |> string.join(" ")
       |> io.println
     }
+    [database_file_path, sql_string, ..] -> {
+      let assert Ok(fs) =
+        file_stream.open(database_file_path, [file_open_mode.Read])
+      let db_header = db_header.read(fs)
+      let schema = schema.read(fs)
+      let assert Ok(sql) = parser.parse(sql_string)
 
+      case sql {
+        Select(Count(_), from) -> {
+          let assert Ok(table) = schema.get(schema, from)
+          let table_offset =
+            page_header.offset(table.root_page, db_header.page_size)
+          let assert Ok(_) =
+            file_stream.position(fs, file_stream.BeginningOfFile(table_offset))
+          let root_page_header = page_header.read(fs)
+
+          root_page_header.pointers
+          |> list.length
+          |> int.to_string
+          |> io.println
+        }
+      }
+    }
     _ -> {
       io.println("Unknown command")
     }
