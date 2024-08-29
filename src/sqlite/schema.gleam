@@ -48,3 +48,14 @@ pub fn read(fs: FileStream) -> Schema {
 pub fn get(schema: Schema, name: String) -> Result(Table, Nil) {
   list.find(schema.tables, fn(table) { table.name == name })
 }
+
+pub fn get_column_index(from table: Table, for name: String) -> Result(Int, Nil) {
+  use outcome, column, index <- list.index_fold(
+    over: table.columns,
+    from: Error(Nil),
+  )
+  case outcome, column.name == name {
+    Error(_), True -> Ok(index)
+    _, _ -> outcome
+  }
+}
