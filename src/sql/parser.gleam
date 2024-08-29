@@ -48,20 +48,23 @@ fn select_count() -> Parser(SQL, Error) {
   use select <- do(command("SELECT", Select))
   use _ <- do(space1())
   use count <- do(command("COUNT", Count))
-  use _ <- do(party.string("(*)"))
-  use _ <- do(space1())
-  use _ <- do(command("FROM", Nil))
-  use _ <- do(space1())
+  use _ <- do(
+    party.all([token("(*)"), space1(), command("FROM", Nil), space1()]),
+  )
   use from <- do(identifier())
 
   party.return(select(count([]), from))
 }
 
 fn create_table() -> Parser(SQL, Error) {
-  use _ <- do(command("CREATE", Nil))
-  use _ <- do(space1())
-  use _ <- do(command("TABLE", Nil))
-  use _ <- do(space1())
+  use _ <- do(
+    party.all([
+      command("CREATE", Nil),
+      space1(),
+      command("TABLE", Nil),
+      space1(),
+    ]),
+  )
   use name <- do(identifier())
   use _ <- do(space())
   use columns <- do(parens(column_defs()))
@@ -99,12 +102,16 @@ fn affinity() -> Parser(ColumnAffinity, Error) {
 fn primary_key() -> Parser(PrimaryKey, Error) {
   let autoincrement = fn() {
     use _ <- do(space1())
-    command("autoincrement", PrimaryWithAutoIncrement)
+    command("AUTOINCREMENT", PrimaryWithAutoIncrement)
   }
   let primary = fn() {
-    use _ <- do(space1())
     use _ <- do(
-      party.all([command("primary", Nil), space1(), command("key", Nil)]),
+      party.all([
+        space1(),
+        command("PRIMARY", Nil),
+        space1(),
+        command("KEY", Nil),
+      ]),
     )
     party.either(autoincrement(), party.return(PrimaryKey))
   }
@@ -128,18 +135,19 @@ fn identifier() {
 }
 
 fn parens(parser: Parser(a, e)) -> Parser(a, e) {
-  use _ <- do(party.string("("))
-  use _ <- do(space())
+  use _ <- do(party.all([token("("), space()]))
   use inner <- do(parser)
-  use _ <- do(space())
-  use _ <- do(party.string(")"))
+  use _ <- do(party.all([space(), token(")")]))
   party.return(inner)
 }
 
 fn list_comma() -> Parser(Nil, e) {
-  use _ <- do(space())
-  use _ <- do(party.string(","))
-  use _ <- do(space())
+  use _ <- do(party.all([space(), token(","), space()]))
+  party.return(Nil)
+}
+
+fn token(t: String) -> Parser(Nil, e) {
+  use _ <- do(party.string(t))
   party.return(Nil)
 }
 
