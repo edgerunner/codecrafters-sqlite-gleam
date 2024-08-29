@@ -15,12 +15,41 @@ Schema([
 	name text,
 	color text
 )",
+    [
+      ColumnDefinition(
+        "id",
+        Integer,
+        PrimaryWithAutoIncrement,
+      ),
+      ColumnDefinition(
+        "name",
+        Text,
+        NotPrimaryKey,
+      ),
+      ColumnDefinition(
+        "color",
+        Text,
+        NotPrimaryKey,
+      ),
+    ],
   ),
   Table(
     "sqlite_sequence",
     "sqlite_sequence",
     3,
     "CREATE TABLE sqlite_sequence(name,seq)",
+    [
+      ColumnDefinition(
+        "name",
+        Blob,
+        NotPrimaryKey,
+      ),
+      ColumnDefinition(
+        "seq",
+        Blob,
+        NotPrimaryKey,
+      ),
+    ],
   ),
   Table(
     "oranges",
@@ -32,5 +61,22 @@ Schema([
 	name text,
 	description text
 )",
+    [
+      ColumnDefinition(
+        "id",
+        Integer,
+        PrimaryWithAutoIncrement,
+      ),
+      ColumnDefinition(
+        "name",
+        Text,
+        NotPrimaryKey,
+      ),
+      ColumnDefinition(
+        "description",
+        Text,
+        NotPrimaryKey,
+      ),
+    ],
   ),
 ])

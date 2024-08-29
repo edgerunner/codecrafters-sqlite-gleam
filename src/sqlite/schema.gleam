@@ -1,5 +1,6 @@
 import file_streams/file_stream.{type FileStream}
 import gleam/list
+import sql/parser.{type ColumnDefinition}
 import sqlite/cell
 import sqlite/page_header
 import sqlite/value
@@ -9,7 +10,13 @@ pub type Schema {
 }
 
 pub type Table {
-  Table(name: String, tbl_name: String, root_page: Int, sql: String)
+  Table(
+    name: String,
+    tbl_name: String,
+    root_page: Int,
+    sql: String,
+    columns: List(ColumnDefinition),
+  )
 }
 
 pub fn read(fs: FileStream) -> Schema {
@@ -24,7 +31,16 @@ pub fn read(fs: FileStream) -> Schema {
       value.Integer(root_page),
       value.Text(sql),
     ] = cell.record
-    Table(name: name, tbl_name: tbl_name, root_page: root_page, sql: sql)
+
+    let assert Ok(parser.CreateTable(columns: columns, ..)) = parser.parse(sql)
+
+    Table(
+      name: name,
+      tbl_name: tbl_name,
+      root_page: root_page,
+      sql: sql,
+      columns: columns,
+    )
   })
   |> Schema
 }
