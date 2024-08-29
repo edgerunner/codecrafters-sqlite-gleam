@@ -45,7 +45,7 @@ pub fn read(fs: FileStream) -> Schema {
   |> Schema
 }
 
-pub fn get(schema: Schema, name: String) -> Result(Table, Nil) {
+pub fn get_table(from schema: Schema, called name: String) -> Result(Table, Nil) {
   list.find(schema.tables, fn(table) { table.name == name })
 }
 

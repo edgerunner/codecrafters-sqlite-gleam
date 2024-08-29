@@ -48,8 +48,9 @@ pub fn main() {
       let assert Ok(sql) = parser.parse(sql_string)
 
       case sql {
-        Select(Count(_), from) -> {
-          let assert Ok(table) = schema.get(schema, from)
+        Select(Count(_), table_name) -> {
+          let assert Ok(table) =
+            schema.get_table(called: table_name, from: schema)
           let table_offset =
             page_header.offset(table.root_page, db_header.page_size)
           let assert Ok(_) =

@@ -14,9 +14,9 @@ pub fn sample_schema_test() {
 pub fn column_index_test() {
   use fs <- sample.stream(100)
   schema.read(fs)
-  |> schema.get("apples")
+  |> schema.get_table(called: "apples")
   |> should.be_ok
-  |> schema.get_column_index("name")
+  |> schema.get_column_index(for: "name")
   |> should.be_ok
   |> should.equal(1)
 }
