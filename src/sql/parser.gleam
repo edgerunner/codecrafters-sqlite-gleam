@@ -80,11 +80,7 @@ fn column_def() -> Parser(ColumnDefinition, Error) {
   use name <- do(identifier())
   use affinity <- do(affinity())
   use primary_key <- do(primary_key())
-  party.return(ColumnDefinition(
-    name: name,
-    affinity: affinity,
-    primary_key: primary_key,
-  ))
+  party.return(ColumnDefinition(name:, affinity:, primary_key:))
 }
 
 fn affinity() -> Parser(ColumnAffinity, Error) {

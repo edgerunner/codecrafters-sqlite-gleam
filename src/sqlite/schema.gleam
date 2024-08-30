@@ -32,15 +32,9 @@ pub fn read(fs: FileStream) -> Schema {
       value.Text(sql),
     ] = cell.record
 
-    let assert Ok(parser.CreateTable(columns: columns, ..)) = parser.parse(sql)
+    let assert Ok(parser.CreateTable(columns:, ..)) = parser.parse(sql)
 
-    Table(
-      name: name,
-      tbl_name: tbl_name,
-      root_page: root_page,
-      sql: sql,
-      columns: columns,
-    )
+    Table(name:, tbl_name:, root_page:, sql:, columns:)
   })
   |> Schema
 }
