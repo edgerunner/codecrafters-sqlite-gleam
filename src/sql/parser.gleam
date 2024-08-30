@@ -7,6 +7,7 @@ pub type SQL {
 }
 
 pub type Select {
+  Fields(List(String))
   Count(List(String))
 }
 
@@ -41,7 +42,7 @@ pub fn parse(input: String) -> Result(SQL, ParseError(Error)) {
 }
 
 pub fn sql() -> Parser(SQL, Error) {
-  party.choice([select_count(), create_table()])
+  party.choice([select_fields(), select_count(), create_table()])
 }
 
 fn select_count() -> Parser(SQL, Error) {
@@ -54,6 +55,16 @@ fn select_count() -> Parser(SQL, Error) {
   use from <- do(identifier())
 
   party.return(select(count([]), from))
+}
+
+fn select_fields() -> Parser(SQL, Error) {
+  use _ <- do(party.all([command("SELECT", Nil), space1()]))
+  use fields <- do(party.sep(identifier(), by: list_comma()))
+  use _ <- do(party.all([space1(), command("FROM", Nil), space1()]))
+  use from <- do(identifier())
+  Fields(fields)
+  |> Select(from:)
+  |> party.return
 }
 
 fn create_table() -> Parser(SQL, Error) {
