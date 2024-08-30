@@ -7,7 +7,7 @@ pub type SQL {
 }
 
 pub type Select {
-  Fields(List(String))
+  Columns(List(String))
   Count(List(String))
 }
 
@@ -47,7 +47,7 @@ pub fn sql() -> Parser(SQL, Error) {
 
 fn select() -> Parser(SQL, Error) {
   use _ <- do(party.all([command("SELECT"), space1()]))
-  use selection <- do(party.either(count(), fields() |> party.map(Fields)))
+  use selection <- do(party.either(count(), columns() |> party.map(Columns)))
   use _ <- do(party.all([space1(), command("FROM"), space1()]))
   use from <- do(identifier())
   party.return(Select(selection, from:))
@@ -55,16 +55,16 @@ fn select() -> Parser(SQL, Error) {
 
 fn count() -> Parser(Select, Error) {
   use _ <- do(party.all([command("COUNT"), space()]))
-  use fields <- do(parens(fields()))
+  use fields <- do(parens(columns()))
   party.return(Count(fields))
 }
 
-fn fields() -> Parser(List(String), Error) {
-  use fields <- do(party.either(
+fn columns() -> Parser(List(String), Error) {
+  use columns <- do(party.either(
     token("*") |> as_value([]),
     party.sep(identifier(), by: list_comma()),
   ))
-  party.return(fields)
+  party.return(columns)
 }
 
 fn create_table() -> Parser(SQL, Error) {
