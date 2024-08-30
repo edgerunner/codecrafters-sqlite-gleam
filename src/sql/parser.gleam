@@ -46,15 +46,20 @@ pub fn sql() -> Parser(SQL, Error) {
 }
 
 fn select_count() -> Parser(SQL, Error) {
-  use select <- do(command("SELECT", Select))
-  use _ <- do(space1())
-  use count <- do(command("COUNT", Count))
   use _ <- do(
-    party.all([token("(*)"), space1(), command("FROM", Nil), space1()]),
+    party.all([
+      command("SELECT", Nil),
+      space1(),
+      command("COUNT", Nil),
+      space(),
+      parens(token("*")),
+      space1(),
+      command("FROM", Nil),
+      space1(),
+    ]),
   )
   use from <- do(identifier())
-
-  party.return(select(count([]), from))
+  party.return(Select(Count([]), from:))
 }
 
 fn select_fields() -> Parser(SQL, Error) {
