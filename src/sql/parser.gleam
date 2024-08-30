@@ -42,34 +42,25 @@ pub fn parse(input: String) -> Result(SQL, ParseError(Error)) {
 }
 
 pub fn sql() -> Parser(SQL, Error) {
-  party.choice([select_fields(), select_count(), create_table()])
+  party.choice([select(), create_table()])
 }
 
-fn select_count() -> Parser(SQL, Error) {
-  use _ <- do(
-    party.all([
-      command("SELECT"),
-      space1(),
-      command("COUNT"),
-      space(),
-      parens(token("*")),
-      space1(),
-      command("FROM"),
-      space1(),
-    ]),
-  )
-  use from <- do(identifier())
-  party.return(Select(Count([]), from:))
-}
-
-fn select_fields() -> Parser(SQL, Error) {
+fn select() -> Parser(SQL, Error) {
   use _ <- do(party.all([command("SELECT"), space1()]))
-  use fields <- do(party.sep(identifier(), by: list_comma()))
+  use selection <- do(party.either(count(), fields() |> party.map(Fields)))
   use _ <- do(party.all([space1(), command("FROM"), space1()]))
   use from <- do(identifier())
-  Fields(fields)
-  |> Select(from:)
-  |> party.return
+  party.return(Select(selection, from:))
+}
+
+fn count() -> Parser(Select, Error) {
+  use _ <- do(party.all([command("COUNT"), space(), parens(token("*"))]))
+  party.return(Count([]))
+}
+
+fn fields() -> Parser(List(String), Error) {
+  use fields <- do(party.sep(identifier(), by: list_comma()))
+  party.return(fields)
 }
 
 fn create_table() -> Parser(SQL, Error) {

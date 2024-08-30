@@ -15,6 +15,16 @@ pub fn select_name_from_apples_test() {
   |> should.equal(parser.Select(parser.Fields(["name"]), from: "apples"))
 }
 
+pub fn select_name_color_from_apples_test() {
+  "SELECT name, color FROM apples"
+  |> parser.parse
+  |> should.be_ok
+  |> should.equal(parser.Select(
+    parser.Fields(["name", "color"]),
+    from: "apples",
+  ))
+}
+
 pub fn create_table_test() {
   "CREATE TABLE apples\n(\n\tid integer primary key autoincrement,\n\tname text,\n\tcolor text\n)"
   |> parser.parse
