@@ -54,12 +54,16 @@ fn select() -> Parser(SQL, Error) {
 }
 
 fn count() -> Parser(Select, Error) {
-  use _ <- do(party.all([command("COUNT"), space(), parens(token("*"))]))
-  party.return(Count([]))
+  use _ <- do(party.all([command("COUNT"), space()]))
+  use fields <- do(parens(fields()))
+  party.return(Count(fields))
 }
 
 fn fields() -> Parser(List(String), Error) {
-  use fields <- do(party.sep(identifier(), by: list_comma()))
+  use fields <- do(party.either(
+    token("*") |> as_value([]),
+    party.sep(identifier(), by: list_comma()),
+  ))
   party.return(fields)
 }
 

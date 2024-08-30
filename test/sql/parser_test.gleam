@@ -8,6 +8,13 @@ pub fn select_count_star_from_apples_test() {
   |> should.equal(parser.Select(parser.Count([]), from: "apples"))
 }
 
+pub fn select_count_color_from_apples_test() {
+  "SELECT COUNT(color) FROM apples"
+  |> parser.parse
+  |> should.be_ok
+  |> should.equal(parser.Select(parser.Count(["color"]), from: "apples"))
+}
+
 pub fn select_name_from_apples_test() {
   "SELECT name FROM apples"
   |> parser.parse
