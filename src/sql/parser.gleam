@@ -48,13 +48,13 @@ pub fn sql() -> Parser(SQL, Error) {
 fn select_count() -> Parser(SQL, Error) {
   use _ <- do(
     party.all([
-      command("SELECT", Nil),
+      command("SELECT"),
       space1(),
-      command("COUNT", Nil),
+      command("COUNT"),
       space(),
       parens(token("*")),
       space1(),
-      command("FROM", Nil),
+      command("FROM"),
       space1(),
     ]),
   )
@@ -63,9 +63,9 @@ fn select_count() -> Parser(SQL, Error) {
 }
 
 fn select_fields() -> Parser(SQL, Error) {
-  use _ <- do(party.all([command("SELECT", Nil), space1()]))
+  use _ <- do(party.all([command("SELECT"), space1()]))
   use fields <- do(party.sep(identifier(), by: list_comma()))
-  use _ <- do(party.all([space1(), command("FROM", Nil), space1()]))
+  use _ <- do(party.all([space1(), command("FROM"), space1()]))
   use from <- do(identifier())
   Fields(fields)
   |> Select(from:)
@@ -74,12 +74,7 @@ fn select_fields() -> Parser(SQL, Error) {
 
 fn create_table() -> Parser(SQL, Error) {
   use _ <- do(
-    party.all([
-      command("CREATE", Nil),
-      space1(),
-      command("TABLE", Nil),
-      space1(),
-    ]),
+    party.all([command("CREATE"), space1(), command("TABLE"), space1()]),
   )
   use name <- do(identifier())
   use _ <- do(space())
@@ -103,9 +98,9 @@ fn affinity() -> Parser(ColumnAffinity, Error) {
   {
     use _ <- do(space1())
     party.choice([
-      command("integer", Integer),
-      command("text", Text),
-      command("float", Real),
+      command("integer") |> as_value(Integer),
+      command("text") |> as_value(Text),
+      command("float") |> as_value(Real),
     ])
   }
   |> party.either(party.return(Blob))
@@ -114,27 +109,22 @@ fn affinity() -> Parser(ColumnAffinity, Error) {
 fn primary_key() -> Parser(PrimaryKey, Error) {
   let autoincrement = fn() {
     use _ <- do(space1())
-    command("AUTOINCREMENT", PrimaryWithAutoIncrement)
+    command("AUTOINCREMENT") |> as_value(PrimaryWithAutoIncrement)
   }
   let primary = fn() {
     use _ <- do(
-      party.all([
-        space1(),
-        command("PRIMARY", Nil),
-        space1(),
-        command("KEY", Nil),
-      ]),
+      party.all([space1(), command("PRIMARY"), space1(), command("KEY")]),
     )
     party.either(autoincrement(), party.return(PrimaryKey))
   }
   party.either(primary(), party.return(NotPrimaryKey))
 }
 
-fn command(token: String, value: v) -> Parser(v, Error) {
+fn command(token: String) -> Parser(Nil, Error) {
   use command_string <- try(party.many1_concat(party.letter()))
   case string.uppercase(token) == string.uppercase(command_string) {
     False -> Error(UnknownCommand(command_string))
-    True -> Ok(value)
+    True -> Ok(Nil)
   }
 }
 
@@ -178,4 +168,9 @@ fn spacer() -> Parser(Nil, e) {
     party.choice([party.whitespace1(), party.string("\n"), party.string("\t")]),
   )
   party.return(Nil)
+}
+
+fn as_value(prev: Parser(nil, e), value: a) -> Parser(a, e) {
+  use _ <- party.map(prev)
+  value
 }
