@@ -6,9 +6,11 @@ import gleam/io
 import gleam/list
 import gleam/string
 import sql/parser.{Count, Select}
+import sqlite/cell
 import sqlite/db_header
 import sqlite/page_header
 import sqlite/schema
+import sqlite/value
 
 pub fn main() {
   let args = argv.load().arguments
@@ -62,7 +64,32 @@ pub fn main() {
           |> int.to_string
           |> io.println
         }
-        Select(parser.Fields(_), _) -> todo
+        Select(parser.Columns(columns), table_name) -> {
+          let assert Ok(table) =
+            schema.get_table(called: table_name, from: schema)
+          let page_offset =
+            page_header.offset(table.root_page, db_header.page_size)
+          let assert Ok(_) =
+            file_stream.position(fs, file_stream.BeginningOfFile(page_offset))
+          let root_page_header = page_header.read(fs)
+          let column_indices =
+            list.filter_map(columns, schema.get_column_index(
+              from: table,
+              for: _,
+            ))
+
+          root_page_header.pointers
+          |> list.each(fn(pointer) {
+            let record = cell.read_at(page_offset + pointer, fs).record
+            column_indices
+            |> list.filter_map(fn(column_index) {
+              record |> list.drop(column_index) |> list.first
+            })
+            |> list.map(value.to_string)
+            |> string.join("|")
+            |> io.println
+          })
+        }
         parser.CreateTable(_, _) -> {
           io.println_error("ERROR: Table creation not implemented yet")
         }
