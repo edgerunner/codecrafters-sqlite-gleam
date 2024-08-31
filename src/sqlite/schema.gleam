@@ -1,6 +1,6 @@
 import file_streams/file_stream.{type FileStream}
 import gleam/list
-import sql/parser.{type ColumnDefinition}
+import sql.{type ColumnDefinition}
 import sqlite/cell
 import sqlite/page_header
 import sqlite/value
@@ -32,7 +32,7 @@ pub fn read(fs: FileStream) -> Schema {
       value.Text(sql),
     ] = cell.record
 
-    let assert Ok(parser.CreateTable(columns:, ..)) = parser.parse(sql)
+    let assert Ok(sql.CreateTable(columns:, ..)) = sql.parse(sql)
 
     Table(name:, tbl_name:, root_page:, sql:, columns:)
   })

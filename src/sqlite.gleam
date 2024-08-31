@@ -5,7 +5,7 @@ import gleam/int.{to_string}
 import gleam/io
 import gleam/list
 import gleam/string
-import sql/parser.{Count, Select}
+import sql.{Count, Select}
 import sqlite/cell
 import sqlite/db_header
 import sqlite/page_header
@@ -47,7 +47,7 @@ pub fn main() {
         file_stream.open(database_file_path, [file_open_mode.Read])
       let db_header = db_header.read(fs)
       let schema = schema.read(fs)
-      let assert Ok(sql) = parser.parse(sql_string)
+      let assert Ok(sql) = sql.parse(sql_string)
 
       case sql {
         Select(Count(_), table_name) -> {
@@ -64,7 +64,7 @@ pub fn main() {
           |> int.to_string
           |> io.println
         }
-        Select(parser.Columns(columns), table_name) -> {
+        Select(sql.Columns(columns), table_name) -> {
           let assert Ok(table) =
             schema.get_table(called: table_name, from: schema)
           let page_offset =
@@ -90,7 +90,7 @@ pub fn main() {
             |> io.println
           })
         }
-        parser.CreateTable(_, _) -> {
+        sql.CreateTable(_, _) -> {
           io.println_error("ERROR: Table creation not implemented yet")
         }
       }
