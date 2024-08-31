@@ -4,4 +4,8 @@ title: select_name_from_apples
 file: ./test/sql_test.gleam
 test_name: select_name_from_apples_test
 ---
-Select(Columns(["name"]), "apples")
+Select(
+  Columns(["name"]),
+  "apples",
+  Everything,
+)

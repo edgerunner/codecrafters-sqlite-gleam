@@ -1,0 +1,11 @@
+---
+version: 1.1.8
+title: select_name_from_apples_where_color_is_yellow
+file: ./test/sql_test.gleam
+test_name: select_name_from_apples_where_color_is_yellow_test
+---
+Select(
+  Columns(["name", "color"]),
+  "apples",
+  Equality("color", "Yellow"),
+)

@@ -50,7 +50,7 @@ pub fn main() {
       let assert Ok(sql) = sql.parse(sql_string)
 
       case sql {
-        Select(Count(_), table_name) -> {
+        Select(Count(_), table_name, _) -> {
           let assert Ok(table) =
             schema.get_table(called: table_name, from: schema)
           let table_offset =
@@ -64,7 +64,7 @@ pub fn main() {
           |> int.to_string
           |> io.println
         }
-        Select(sql.Columns(columns), table_name) -> {
+        Select(sql.Columns(columns), table_name, _) -> {
           let assert Ok(table) =
             schema.get_table(called: table_name, from: schema)
           let page_offset =

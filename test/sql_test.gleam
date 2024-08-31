@@ -27,6 +27,14 @@ pub fn select_name_from_apples_test() {
   |> birdie.snap("select_name_from_apples")
 }
 
+pub fn select_name_from_apples_where_color_is_yellow_test() {
+  "SELECT name, color FROM apples WHERE color = 'Yellow'"
+  |> sql.parse
+  |> should.be_ok
+  |> pprint.format
+  |> birdie.snap("select_name_from_apples_where_color_is_yellow")
+}
+
 pub fn select_name_color_from_apples_test() {
   "SELECT name, color FROM apples"
   |> sql.parse

@@ -2,13 +2,18 @@ import gleam/string
 import party.{type ParseError, type Parser, do, try}
 
 pub type SQL {
-  Select(Select, from: String)
+  Select(Select, from: String, where: Where)
   CreateTable(name: String, columns: List(ColumnDefinition))
 }
 
 pub type Select {
   Columns(List(String))
   Count(List(String))
+}
+
+pub type Where {
+  Everything
+  Equality(column: String, value: String)
 }
 
 pub type Error {
@@ -50,7 +55,8 @@ fn select() -> Parser(SQL, Error) {
   use selection <- do(party.either(count(), columns() |> party.map(Columns)))
   use _ <- do(party.all([space1(), command("FROM"), space1()]))
   use from <- do(identifier())
-  party.return(Select(selection, from:))
+  use where <- do(party.either(where_clause(), party.return(Everything)))
+  party.return(Select(selection, from:, where:))
 }
 
 fn count() -> Parser(Select, Error) {
@@ -65,6 +71,14 @@ fn columns() -> Parser(List(String), Error) {
     party.sep(identifier(), by: list_comma()),
   ))
   party.return(columns)
+}
+
+fn where_clause() -> Parser(Where, Error) {
+  use _ <- do(party.all([space1(), command("WHERE"), space1()]))
+  use column <- do(identifier())
+  use _ <- do(party.all([space(), token("="), space()]))
+  use value <- do(single_quoted_string())
+  party.return(Equality(column:, value:))
 }
 
 fn create_table() -> Parser(SQL, Error) {
@@ -168,4 +182,10 @@ fn spacer() -> Parser(Nil, e) {
 fn as_value(prev: Parser(nil, e), value: a) -> Parser(a, e) {
   use _ <- party.map(prev)
   value
+}
+
+fn single_quoted_string() -> Parser(String, e) {
+  use _ <- do(token("'"))
+  use characters <- do(party.until(party.satisfy(fn(_) { True }), token("'")))
+  string.concat(characters) |> party.return
 }

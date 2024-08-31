@@ -7,4 +7,5 @@ test_name: select_name_color_from_apples_test
 Select(
   Columns(["name", "color"]),
   "apples",
+  Everything,
 )
