@@ -1,13 +1,15 @@
 ---
-version: 1.1.8
+version: 1.2.1
 title: Second page header
-file: ./test/sqlite/page_header_test.gleam
-test_name: second_page_header_test
+file: ./test/sqlite/page_test.gleam
+test_name: second_page_test
 ---
-LeafTable(
-  0,
+Page(
+  Table,
+  4096,
   4,
-  [4067, 4054, 4029, 4001],
-  4001,
+  [8163, 8150, 8125, 8097],
+  8097,
   0,
+  Leaf,
 )

@@ -11,7 +11,7 @@ import gleam/string
 import sql.{Count, Select}
 import sqlite/cell
 import sqlite/db
-import sqlite/page_header
+import sqlite/page
 import sqlite/schema
 import sqlite/value
 
@@ -25,13 +25,16 @@ pub fn main() {
         file_stream.open(database_file_path, [file_open_mode.Read])
 
       let db = db.read(fs)
-      let schema_page_header = page_header.read(fs)
+      let schema = schema.read(db)
 
       io.print("database page size: ")
       io.println(int.to_string(db.page_size))
 
       io.print("number of tables: ")
-      io.println(int.to_string(schema_page_header.cells))
+      schema.tables
+      |> list.length
+      |> int.to_string
+      |> io.println
     }
     [database_file_path, ".tables", ..] -> {
       let assert Ok(fs) =
@@ -56,12 +59,9 @@ pub fn main() {
         Select(Count(_), table_name, _) -> {
           let assert Ok(table) =
             schema.get_table(called: table_name, from: schema)
-          let table_offset = page_header.offset(table.root_page, db.page_size)
-          let assert Ok(_) =
-            file_stream.position(fs, file_stream.BeginningOfFile(table_offset))
-          let root_page_header = page_header.read(fs)
+          let root_page = page.read(from: db, page: table.root_page)
 
-          root_page_header.pointers
+          root_page.pointers
           |> list.length
           |> int.to_string
           |> io.println
