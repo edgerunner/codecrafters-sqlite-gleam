@@ -3,7 +3,7 @@ import file_streams/file_open_mode
 import file_streams/file_stream
 import gleam/bit_array
 import gleam/float
-import gleam/int.{to_string}
+import gleam/int
 import gleam/io
 import gleam/list
 import gleam/result
@@ -28,10 +28,10 @@ pub fn main() {
       let schema_page_header = page_header.read(fs)
 
       io.print("database page size: ")
-      io.println(to_string(db.page_size))
+      io.println(int.to_string(db.page_size))
 
       io.print("number of tables: ")
-      io.println(to_string(schema_page_header.cells))
+      io.println(int.to_string(schema_page_header.cells))
     }
     [database_file_path, ".tables", ..] -> {
       let assert Ok(fs) =
