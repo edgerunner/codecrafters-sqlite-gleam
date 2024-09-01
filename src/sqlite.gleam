@@ -38,7 +38,7 @@ pub fn main() {
         file_stream.open(database_file_path, [file_open_mode.Read])
 
       let db = db.read(fs)
-      let schema = schema.read(fs, from: db)
+      let schema = schema.read(from: db)
 
       schema.tables
       |> list.map(fn(table) { table.name })
@@ -49,7 +49,7 @@ pub fn main() {
       let assert Ok(fs) =
         file_stream.open(database_file_path, [file_open_mode.Read])
       let db = db.read(fs)
-      let schema = schema.read(fs, from: db)
+      let schema = schema.read(from: db)
       let assert Ok(sql) = sql.parse(sql_string)
 
       case sql {
@@ -104,7 +104,7 @@ pub fn main() {
             }
           }
 
-          cell.read_all(fs, from: db, in: table.root_page)
+          cell.read_all(from: db, in: table.root_page)
           |> list.filter_map(fn(cell) {
             case cell {
               cell.TableLeafCell(record:, ..) -> Ok(record)

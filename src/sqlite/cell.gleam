@@ -11,23 +11,23 @@ pub type Cell {
   TableInteriorCell(left_child_pointer: Int, row_id: Int)
 }
 
-pub fn read_all(fs: FileStream, from db: DB, in page_number: Int) -> List(Cell) {
+pub fn read_all(from db: DB, in page_number: Int) -> List(Cell) {
   let assert Ok(_) =
     page_header.offset(db.page_size, page_number:)
     |> file_stream.BeginningOfFile
-    |> file_stream.position(fs, _)
-  let page_header = page_header.read(fs)
+    |> file_stream.position(db.fs, _)
+  let page_header = page_header.read(db.fs)
   use pointer <- list.map(page_header.pointers)
   let assert Ok(_) =
     file_stream.position(
-      fs,
+      db.fs,
       file_stream.BeginningOfFile(
         db.page_size * page_number - db.page_size + pointer,
       ),
     )
   case page_header {
-    page_header.LeafTable(..) -> read_table_leaf_cell(fs)
-    page_header.InteriorTable(..) -> read_table_interior_cell(fs)
+    page_header.LeafTable(..) -> read_table_leaf_cell(db.fs)
+    page_header.InteriorTable(..) -> read_table_interior_cell(db.fs)
     _ -> panic as "Index pages aren't yet implemented"
   }
 }
