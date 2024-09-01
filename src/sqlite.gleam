@@ -70,11 +70,6 @@ pub fn main() {
         Select(sql.Columns(columns), table_name, where) -> {
           let assert Ok(table) =
             schema.get_table(called: table_name, from: schema)
-          let page_offset =
-            page_header.offset(table.root_page, db_header.page_size)
-          let assert Ok(_) =
-            file_stream.position(fs, file_stream.BeginningOfFile(page_offset))
-          let root_page_header = page_header.read(fs)
           let column_indices =
             list.filter_map(columns, schema.get_column_index(
               from: table,
@@ -110,10 +105,8 @@ pub fn main() {
             }
           }
 
-          root_page_header.pointers
-          |> list.map(fn(pointer) {
-            cell.read_at(page_offset + pointer, fs).record
-          })
+          cell.read_all(fs, from: db_header, in: table.root_page)
+          |> list.map(fn(cell) { cell.record })
           |> list.filter(filter)
           |> list.each(fn(record) {
             column_indices
