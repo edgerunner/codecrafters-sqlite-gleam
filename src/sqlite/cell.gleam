@@ -1,6 +1,6 @@
 import file_streams/file_stream.{type FileStream}
 import gleam/list
-import sqlite/db_header.{type Header}
+import sqlite/db.{type DB}
 import sqlite/page_header
 import sqlite/record
 import sqlite/value.{type Value}
@@ -11,11 +11,7 @@ pub type Cell {
   TableInteriorCell(left_child_pointer: Int, row_id: Int)
 }
 
-pub fn read_all(
-  fs: FileStream,
-  from db: Header,
-  in page_number: Int,
-) -> List(Cell) {
+pub fn read_all(fs: FileStream, from db: DB, in page_number: Int) -> List(Cell) {
   let assert Ok(_) =
     page_header.offset(db.page_size, page_number:)
     |> file_stream.BeginningOfFile

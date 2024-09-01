@@ -1,16 +1,16 @@
 import birdie
 import pprint
 import sample
-import sqlite/db_header
+import sqlite/db
 
-pub fn header_read_test() {
+pub fn db_header_read_test() {
   use file <- sample.stream(0)
 
-  db_header.read(file)
+  db.read(file)
   |> pprint.with_config(pprint.Config(
     pprint.Unstyled,
     pprint.KeepBitArrays,
     pprint.Labels,
   ))
-  |> birdie.snap("Sample header")
+  |> birdie.snap("db_header_read")
 }

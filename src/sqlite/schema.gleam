@@ -2,7 +2,7 @@ import file_streams/file_stream.{type FileStream}
 import gleam/list
 import sql.{type ColumnDefinition}
 import sqlite/cell
-import sqlite/db_header.{type Header}
+import sqlite/db.{type DB}
 import sqlite/value
 
 pub type Schema {
@@ -19,7 +19,7 @@ pub type Table {
   )
 }
 
-pub fn read(fs: FileStream, from db: Header) -> Schema {
+pub fn read(fs: FileStream, from db: DB) -> Schema {
   cell.read_all(fs, from: db, in: 1)
   |> list.map(fn(cell) {
     let assert cell.TableLeafCell(record:, ..) = cell

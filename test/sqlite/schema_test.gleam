@@ -2,12 +2,12 @@ import birdie
 import glacier/should
 import pprint
 import sample
-import sqlite/db_header
+import sqlite/db
 import sqlite/schema
 
 pub fn sample_schema_test() {
   use fs <- sample.stream(0)
-  let db = db_header.read(fs)
+  let db = db.read(fs)
   schema.read(fs, from: db)
   |> pprint.format
   |> birdie.snap("Sample schema dump")
@@ -15,7 +15,7 @@ pub fn sample_schema_test() {
 
 pub fn column_index_test() {
   use fs <- sample.stream(0)
-  let db = db_header.read(fs)
+  let db = db.read(fs)
   schema.read(fs, from: db)
   |> schema.get_table(called: "apples")
   |> should.be_ok

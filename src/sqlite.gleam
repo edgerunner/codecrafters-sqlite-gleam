@@ -10,7 +10,7 @@ import gleam/result
 import gleam/string
 import sql.{Count, Select}
 import sqlite/cell
-import sqlite/db_header
+import sqlite/db
 import sqlite/page_header
 import sqlite/schema
 import sqlite/value
@@ -24,11 +24,11 @@ pub fn main() {
       let assert Ok(fs) =
         file_stream.open(database_file_path, [file_open_mode.Read])
 
-      let db_header = db_header.read(fs)
+      let db = db.read(fs)
       let schema_page_header = page_header.read(fs)
 
       io.print("database page size: ")
-      io.println(to_string(db_header.page_size))
+      io.println(to_string(db.page_size))
 
       io.print("number of tables: ")
       io.println(to_string(schema_page_header.cells))
@@ -37,7 +37,7 @@ pub fn main() {
       let assert Ok(fs) =
         file_stream.open(database_file_path, [file_open_mode.Read])
 
-      let db = db_header.read(fs)
+      let db = db.read(fs)
       let schema = schema.read(fs, from: db)
 
       schema.tables
@@ -48,7 +48,7 @@ pub fn main() {
     [database_file_path, sql_string, ..] -> {
       let assert Ok(fs) =
         file_stream.open(database_file_path, [file_open_mode.Read])
-      let db = db_header.read(fs)
+      let db = db.read(fs)
       let schema = schema.read(fs, from: db)
       let assert Ok(sql) = sql.parse(sql_string)
 

@@ -1,0 +1,30 @@
+---
+version: 1.2.1
+title: db_header_read
+file: ./test/sqlite/db_test.gleam
+test_name: db_header_read_test
+---
+Db(
+  4096,
+  Legacy,
+  Legacy,
+  0,
+  5,
+  4,
+  0,
+  0,
+  2,
+  SchemaFormat4,
+  0,
+  0,
+  Utf8,
+  0,
+  False,
+  0,
+  5,
+  3034000,
+  FileStream(
+    //erl(<0.135.0>),
+    Some(Latin1),
+  ),
+)
