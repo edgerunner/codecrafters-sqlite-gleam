@@ -37,8 +37,8 @@ pub fn main() {
       let assert Ok(fs) =
         file_stream.open(database_file_path, [file_open_mode.Read])
 
-      let _db_header = db_header.read(fs)
-      let schema = schema.read(fs)
+      let db = db_header.read(fs)
+      let schema = schema.read(fs, from: db)
 
       schema.tables
       |> list.map(fn(table) { table.name })
@@ -48,16 +48,15 @@ pub fn main() {
     [database_file_path, sql_string, ..] -> {
       let assert Ok(fs) =
         file_stream.open(database_file_path, [file_open_mode.Read])
-      let db_header = db_header.read(fs)
-      let schema = schema.read(fs)
+      let db = db_header.read(fs)
+      let schema = schema.read(fs, from: db)
       let assert Ok(sql) = sql.parse(sql_string)
 
       case sql {
         Select(Count(_), table_name, _) -> {
           let assert Ok(table) =
             schema.get_table(called: table_name, from: schema)
-          let table_offset =
-            page_header.offset(table.root_page, db_header.page_size)
+          let table_offset = page_header.offset(table.root_page, db.page_size)
           let assert Ok(_) =
             file_stream.position(fs, file_stream.BeginningOfFile(table_offset))
           let root_page_header = page_header.read(fs)
@@ -105,7 +104,7 @@ pub fn main() {
             }
           }
 
-          cell.read_all(fs, from: db_header, in: table.root_page)
+          cell.read_all(fs, from: db, in: table.root_page)
           |> list.filter_map(fn(cell) {
             case cell {
               cell.TableLeafCell(record:, ..) -> Ok(record)

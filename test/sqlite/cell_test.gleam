@@ -4,20 +4,6 @@ import sample
 import sqlite/cell
 import sqlite/db_header
 
-pub fn read_cell_1_test() {
-  use fs <- sample.stream(0x2ff4)
-  cell.read(fs)
-  |> pprint.format
-  |> birdie.snap("Cell 1")
-}
-
-pub fn read_cell_2_test() {
-  use fs <- sample.stream(0x1fa1)
-  cell.read(fs)
-  |> pprint.format
-  |> birdie.snap("Cell 2")
-}
-
 pub fn read_all_page1_test() {
   use fs <- sample.stream(0x0000)
   db_header.read(fs)

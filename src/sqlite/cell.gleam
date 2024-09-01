@@ -48,15 +48,3 @@ fn read_table_leaf_cell(fs: FileStream) -> Cell {
   let record = record.read(fs)
   TableLeafCell(payload_size:, row_id:, record:)
 }
-
-pub fn read(fs: FileStream) -> Cell {
-  let payload_size = varint.read(fs)
-  let row_id = varint.read(fs)
-  let record = record.read(fs)
-  TableLeafCell(payload_size, row_id, record)
-}
-
-pub fn read_at(pos: Int, fs: FileStream) -> Cell {
-  let assert Ok(_) = file_stream.position(fs, file_stream.BeginningOfFile(pos))
-  read(fs)
-}
