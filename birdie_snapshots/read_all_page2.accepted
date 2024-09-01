@@ -1,0 +1,40 @@
+---
+version: 1.2.1
+title: read_all_page2
+file: ./test/sqlite/cell_test.gleam
+test_name: read_all_page2_test
+---
+[
+  TableLeafCell(
+    27,
+    1,
+    [
+      Null,
+      Text("Granny Smith"),
+      Text("Light Green"),
+    ],
+  ),
+  TableLeafCell(
+    11,
+    2,
+    [Null, Text("Fuji"), Text("Red")],
+  ),
+  TableLeafCell(
+    23,
+    3,
+    [
+      Null,
+      Text("Honeycrisp"),
+      Text("Blush Red"),
+    ],
+  ),
+  TableLeafCell(
+    26,
+    4,
+    [
+      Null,
+      Text("Golden Delicious"),
+      Text("Yellow"),
+    ],
+  ),
+]

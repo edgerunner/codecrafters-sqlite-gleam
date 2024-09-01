@@ -23,14 +23,14 @@ pub fn read(fs: FileStream) -> Schema {
   let schema_page_header = page_header.read(fs)
   schema_page_header.pointers
   |> list.map(fn(pos) {
-    let cell = cell.read_at(pos, fs)
+    let assert cell.TableLeafCell(record:, ..) = cell.read_at(pos, fs)
     let assert [
       value.Text("table"),
       value.Text(name),
       value.Text(tbl_name),
       value.Integer(root_page),
       value.Text(sql),
-    ] = cell.record
+    ] = record
 
     let assert Ok(sql.CreateTable(columns:, ..)) = sql.parse(sql)
 

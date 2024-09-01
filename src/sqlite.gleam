@@ -106,7 +106,12 @@ pub fn main() {
           }
 
           cell.read_all(fs, from: db_header, in: table.root_page)
-          |> list.map(fn(cell) { cell.record })
+          |> list.filter_map(fn(cell) {
+            case cell {
+              cell.TableLeafCell(record:, ..) -> Ok(record)
+              _ -> Error(Nil)
+            }
+          })
           |> list.filter(filter)
           |> list.each(fn(record) {
             column_indices

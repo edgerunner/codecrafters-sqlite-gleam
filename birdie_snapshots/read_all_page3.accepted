@@ -1,0 +1,18 @@
+---
+version: 1.2.1
+title: read_all_page3
+file: ./test/sqlite/cell_test.gleam
+test_name: read_all_page3_test
+---
+[
+  TableLeafCell(
+    10,
+    1,
+    [Text("apples"), Integer(4)],
+  ),
+  TableLeafCell(
+    11,
+    2,
+    [Text("oranges"), Integer(6)],
+  ),
+]

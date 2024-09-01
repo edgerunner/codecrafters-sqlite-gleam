@@ -1,0 +1,62 @@
+---
+version: 1.2.1
+title: read_all_page4
+file: ./test/sqlite/cell_test.gleam
+test_name: read_all_page4_test
+---
+[
+  TableLeafCell(
+    30,
+    1,
+    [
+      Null,
+      Text("Mandarin"),
+      Text("great for snacking"),
+    ],
+  ),
+  TableLeafCell(
+    25,
+    2,
+    [
+      Null,
+      Text("Tangelo"),
+      Text("sweet and tart"),
+    ],
+  ),
+  TableLeafCell(
+    36,
+    3,
+    [
+      Null,
+      Text("Tangerine"),
+      Text("great for sweeter juice"),
+    ],
+  ),
+  TableLeafCell(
+    50,
+    4,
+    [
+      Null,
+      Text("Clementine"),
+      Text("usually seedless, great for snacking"),
+    ],
+  ),
+  TableLeafCell(
+    35,
+    5,
+    [
+      Null,
+      Text("Valencia Orange"),
+      Text("best for juicing"),
+    ],
+  ),
+  TableLeafCell(
+    44,
+    6,
+    [
+      Null,
+      Text("Navel Orange"),
+      Text("sweet with slight bitterness"),
+    ],
+  ),
+]

@@ -1,10 +1,10 @@
 ---
-version: 1.1.8
+version: 1.2.1
 title: Cell 2
 file: ./test/sqlite/cell_test.gleam
 test_name: read_cell_2_test
 ---
-Cell(
+TableLeafCell(
   26,
   4,
   [

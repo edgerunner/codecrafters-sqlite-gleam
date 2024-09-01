@@ -1,0 +1,51 @@
+---
+version: 1.2.1
+title: read_all_page1
+file: ./test/sqlite/cell_test.gleam
+test_name: read_all_page1_test
+---
+[
+  TableLeafCell(
+    111,
+    1,
+    [
+      Text("table"),
+      Text("apples"),
+      Text("apples"),
+      Integer(2),
+      Text("CREATE TABLE apples
+(
+	id integer primary key autoincrement,
+	name text,
+	color text
+)"),
+    ],
+  ),
+  TableLeafCell(
+    80,
+    2,
+    [
+      Text("table"),
+      Text("sqlite_sequence"),
+      Text("sqlite_sequence"),
+      Integer(3),
+      Text("CREATE TABLE sqlite_sequence(name,seq)"),
+    ],
+  ),
+  TableLeafCell(
+    120,
+    3,
+    [
+      Text("table"),
+      Text("oranges"),
+      Text("oranges"),
+      Integer(4),
+      Text("CREATE TABLE oranges
+(
+	id integer primary key autoincrement,
+	name text,
+	description text
+)"),
+    ],
+  ),
+]
