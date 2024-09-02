@@ -2,7 +2,7 @@ import argv
 import file_streams/file_open_mode
 import file_streams/file_stream
 import gleam/bit_array
-import gleam/dict
+import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
 import gleam/io
@@ -13,7 +13,7 @@ import sql.{Count, Select}
 import sqlite/db
 import sqlite/schema
 import sqlite/table
-import sqlite/value
+import sqlite/value.{type Value}
 
 pub fn main() {
   let args = argv.load().arguments
@@ -66,29 +66,11 @@ pub fn main() {
 
           let filter = case where {
             sql.Everything -> fn(_) { True }
-            sql.Equality(column, compare_value) -> {
-              fn(row) {
-                let assert Ok(value) = dict.get(row, column)
-                case value {
-                  value.Null -> False
-                  value.Text(text) -> text == compare_value
-                  value.Integer(integer) ->
-                    compare_value
-                    |> int.parse
-                    |> result.map(fn(parsed) { parsed == integer })
-                    |> result.unwrap(False)
-                  value.Floating(floating) ->
-                    compare_value
-                    |> float.parse
-                    |> result.map(fn(parsed) { parsed == floating })
-                    |> result.unwrap(False)
-                  value.Blob(blob) ->
-                    compare_value
-                    |> bit_array.from_string
-                    == blob
-                }
-              }
-            }
+            sql.Equality(column:, value:) -> equality_filter(
+              column:,
+              value:,
+              row: _,
+            )
           }
 
           table.filter(from_table, filter)
@@ -107,5 +89,31 @@ pub fn main() {
     _ -> {
       io.println("Unknown command")
     }
+  }
+}
+
+fn equality_filter(
+  column column,
+  value compare_value: String,
+  row row: Dict(String, Value),
+) {
+  let assert Ok(value) = dict.get(row, column)
+  case value {
+    value.Null -> False
+    value.Text(text) -> text == compare_value
+    value.Integer(integer) ->
+      compare_value
+      |> int.parse
+      |> result.map(fn(parsed) { parsed == integer })
+      |> result.unwrap(False)
+    value.Floating(floating) ->
+      compare_value
+      |> float.parse
+      |> result.map(fn(parsed) { parsed == floating })
+      |> result.unwrap(False)
+    value.Blob(blob) ->
+      compare_value
+      |> bit_array.from_string
+      == blob
   }
 }
