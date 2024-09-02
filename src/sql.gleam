@@ -77,7 +77,7 @@ fn where_clause() -> Parser(Where, Error) {
   use _ <- do(party.all([space1(), command("WHERE"), space1()]))
   use column <- do(identifier())
   use _ <- do(party.all([space(), token("="), space()]))
-  use value <- do(single_quoted_string())
+  use value <- do(quoted(party.satisfy(fn(_) { True })))
   party.return(Equality(column:, value:))
 }
 
@@ -85,7 +85,7 @@ fn create_table() -> Parser(SQL, Error) {
   use _ <- do(
     party.all([command("CREATE"), space1(), command("TABLE"), space1()]),
   )
-  use name <- do(identifier())
+  use name <- do(party.either(quoted(identifier()), identifier()))
   use _ <- do(space())
   use columns <- do(parens(column_defs()))
   party.return(CreateTable(name:, columns:))
@@ -184,8 +184,8 @@ fn as_value(prev: Parser(nil, e), value: a) -> Parser(a, e) {
   value
 }
 
-fn single_quoted_string() -> Parser(String, e) {
-  use _ <- do(token("'"))
-  use characters <- do(party.until(party.satisfy(fn(_) { True }), token("'")))
+fn quoted(parser: Parser(String, e)) -> Parser(String, e) {
+  use quote <- do(party.either(party.string("'"), party.string("\"")))
+  use characters <- do(party.until(parser, token(quote)))
   string.concat(characters) |> party.return
 }
