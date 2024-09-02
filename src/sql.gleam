@@ -25,6 +25,7 @@ pub type ColumnDefinition {
     name: String,
     affinity: ColumnAffinity,
     primary_key: PrimaryKey,
+    not_null: Bool,
   )
 }
 
@@ -100,7 +101,8 @@ fn column_def() -> Parser(ColumnDefinition, Error) {
   use name <- do(identifier())
   use affinity <- do(affinity())
   use primary_key <- do(primary_key())
-  party.return(ColumnDefinition(name:, affinity:, primary_key:))
+  use not_null <- do(not_null())
+  party.return(ColumnDefinition(name:, affinity:, primary_key:, not_null:))
 }
 
 fn affinity() -> Parser(ColumnAffinity, Error) {
@@ -127,6 +129,14 @@ fn primary_key() -> Parser(PrimaryKey, Error) {
     party.either(autoincrement(), party.return(PrimaryKey))
   }
   party.either(primary(), party.return(NotPrimaryKey))
+}
+
+fn not_null() -> Parser(Bool, Error) {
+  party.either(
+    party.all([space1(), command("NOT"), space1(), command("NULL")])
+      |> as_value(True),
+    party.return(False),
+  )
 }
 
 fn command(token: String) -> Parser(Nil, Error) {

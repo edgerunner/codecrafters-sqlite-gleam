@@ -1,5 +1,5 @@
 ---
-version: 1.1.8
+version: 1.2.1
 title: Sample schema dump
 file: ./test/sqlite/schema_test.gleam
 test_name: sample_schema_test
@@ -20,16 +20,19 @@ Schema([
         "id",
         Integer,
         PrimaryWithAutoIncrement,
+        False,
       ),
       ColumnDefinition(
         "name",
         Text,
         NotPrimaryKey,
+        False,
       ),
       ColumnDefinition(
         "color",
         Text,
         NotPrimaryKey,
+        False,
       ),
     ],
   ),
@@ -43,11 +46,13 @@ Schema([
         "name",
         Blob,
         NotPrimaryKey,
+        False,
       ),
       ColumnDefinition(
         "seq",
         Blob,
         NotPrimaryKey,
+        False,
       ),
     ],
   ),
@@ -66,16 +71,19 @@ Schema([
         "id",
         Integer,
         PrimaryWithAutoIncrement,
+        False,
       ),
       ColumnDefinition(
         "name",
         Text,
         NotPrimaryKey,
+        False,
       ),
       ColumnDefinition(
         "description",
         Text,
         NotPrimaryKey,
+        False,
       ),
     ],
   ),
