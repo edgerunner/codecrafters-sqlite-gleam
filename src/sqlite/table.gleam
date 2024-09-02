@@ -58,3 +58,7 @@ pub fn filter(
     })
   Table(..table, rows:)
 }
+
+pub fn rows(table: Table) -> List(List(Value)) {
+  dict.values(table.rows)
+}

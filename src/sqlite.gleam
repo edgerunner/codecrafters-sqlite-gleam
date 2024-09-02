@@ -2,6 +2,7 @@ import argv
 import file_streams/file_open_mode
 import file_streams/file_stream
 import gleam/bit_array
+import gleam/dict
 import gleam/float
 import gleam/int
 import gleam/io
@@ -9,10 +10,10 @@ import gleam/list
 import gleam/result
 import gleam/string
 import sql.{Count, Select}
-import sqlite/cell
 import sqlite/db
 import sqlite/page
 import sqlite/schema
+import sqlite/table
 import sqlite/value
 
 pub fn main() {
@@ -67,21 +68,13 @@ pub fn main() {
           |> io.println
         }
         Select(sql.Columns(columns), table_name, where) -> {
-          let assert Ok(table) =
-            schema.get_table(called: table_name, from: schema)
-          let column_indices =
-            list.filter_map(columns, schema.get_column_index(
-              from: table,
-              for: _,
-            ))
+          let assert Ok(from_table) = table.read(from: db, name: table_name)
+
           let filter = case where {
             sql.Everything -> fn(_) { True }
             sql.Equality(column, compare_value) -> {
-              let assert Ok(column_index) =
-                schema.get_column_index(from: table, for: column)
-              fn(record) {
-                let assert Ok(value) =
-                  record |> list.drop(column_index) |> list.first
+              fn(row) {
+                let assert Ok(value) = dict.get(row, column)
                 case value {
                   value.Null -> False
                   value.Text(text) -> text == compare_value
@@ -104,20 +97,11 @@ pub fn main() {
             }
           }
 
-          cell.read_all(from: db, in: table.root_page)
-          |> list.filter_map(fn(cell) {
-            case cell {
-              cell.TableLeafCell(record:, ..) -> Ok(record)
-              _ -> Error(Nil)
-            }
-          })
-          |> list.filter(filter)
-          |> list.each(fn(record) {
-            column_indices
-            |> list.filter_map(fn(column_index) {
-              record |> list.drop(column_index) |> list.first
-            })
-            |> list.map(value.to_string)
+          table.filter(from_table, filter)
+          |> table.select(columns:)
+          |> table.rows
+          |> list.each(fn(row) {
+            list.map(row, value.to_string)
             |> string.join("|")
             |> io.println
           })
