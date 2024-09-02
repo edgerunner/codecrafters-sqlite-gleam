@@ -1,0 +1,43 @@
+---
+version: 1.2.1
+title: filter_red_apples
+file: ./test/sqlite/table_test.gleam
+test_name: filter_red_apples_test
+---
+Table(
+  dict.from_list([
+    #(2, [
+      Null,
+      Text("Fuji"),
+      Text("Red"),
+    ]),
+  ]),
+  Table(
+    "apples",
+    "apples",
+    2,
+    "CREATE TABLE apples
+(
+	id integer primary key autoincrement,
+	name text,
+	color text
+)",
+    [
+      ColumnDefinition(
+        "id",
+        Integer,
+        PrimaryWithAutoIncrement,
+      ),
+      ColumnDefinition(
+        "name",
+        Text,
+        NotPrimaryKey,
+      ),
+      ColumnDefinition(
+        "color",
+        Text,
+        NotPrimaryKey,
+      ),
+    ],
+  ),
+)

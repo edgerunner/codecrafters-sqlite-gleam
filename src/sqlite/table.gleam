@@ -45,3 +45,16 @@ pub fn select(from table: Table, columns columns: List(String)) -> Table {
 
   Table(..table, rows:)
 }
+
+pub fn filter(
+  from table: Table,
+  with filter_function: fn(Dict(String, Value)) -> Bool,
+) -> Table {
+  let rows =
+    dict.filter(table.rows, fn(_id, row) {
+      list.map2(table.schema.columns, row, fn(def, value) { #(def.name, value) })
+      |> dict.from_list
+      |> filter_function
+    })
+  Table(..table, rows:)
+}
