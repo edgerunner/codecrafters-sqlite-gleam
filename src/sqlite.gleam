@@ -11,7 +11,6 @@ import gleam/result
 import gleam/string
 import sql.{Count, Select}
 import sqlite/db
-import sqlite/page
 import sqlite/schema
 import sqlite/table
 import sqlite/value
@@ -19,7 +18,6 @@ import sqlite/value
 pub fn main() {
   let args = argv.load().arguments
 
-  // Uncomment this to pass the first stage
   case args {
     [database_file_path, ".dbinfo", ..] -> {
       let assert Ok(fs) =
@@ -102,9 +100,8 @@ pub fn main() {
             |> io.println
           })
         }
-        sql.CreateTable(_, _) -> {
-          io.println_error("ERROR: Table creation not implemented yet")
-        }
+        sql.CreateTable(_, _) ->
+          panic as "ERROR: Table creation not implemented yet"
       }
     }
     _ -> {
