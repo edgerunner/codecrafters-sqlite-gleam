@@ -3,12 +3,20 @@ import glacier/should
 import pprint
 import sample
 import sqlite/schema
+import superheroes
 
 pub fn sample_schema_test() {
   use db <- sample.db()
   schema.read(from: db)
   |> pprint.format
   |> birdie.snap("Sample schema dump")
+}
+
+pub fn superheroes_schema_test() {
+  use db <- superheroes.db()
+  schema.read(from: db)
+  |> pprint.format
+  |> birdie.snap("superheroes_schema")
 }
 
 pub fn column_index_test() {
