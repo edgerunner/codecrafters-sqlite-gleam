@@ -4,7 +4,7 @@ import sample
 import sqlite/db
 
 pub fn db_header_read_test() {
-  use file <- sample.stream(0)
+  use file <- sample.stream(sample.fruits, 0)
 
   db.read(file)
   |> pprint.format

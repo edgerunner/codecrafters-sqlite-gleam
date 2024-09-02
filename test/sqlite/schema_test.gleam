@@ -3,24 +3,23 @@ import glacier/should
 import pprint
 import sample
 import sqlite/schema
-import superheroes
 
 pub fn sample_schema_test() {
-  use db <- sample.db()
+  use db <- sample.db(sample.fruits)
   schema.read(from: db)
   |> pprint.format
   |> birdie.snap("Sample schema dump")
 }
 
 pub fn superheroes_schema_test() {
-  use db <- superheroes.db()
+  use db <- sample.db(sample.superheroes)
   schema.read(from: db)
   |> pprint.format
   |> birdie.snap("superheroes_schema")
 }
 
 pub fn column_index_test() {
-  use db <- sample.db()
+  use db <- sample.db(sample.fruits)
   schema.read(from: db)
   |> schema.get_table(called: "apples")
   |> should.be_ok

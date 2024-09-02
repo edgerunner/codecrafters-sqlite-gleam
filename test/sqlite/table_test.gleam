@@ -7,7 +7,7 @@ import sqlite/table
 import sqlite/value
 
 pub fn apples_table_test() {
-  use db <- sample.db()
+  use db <- sample.db(sample.fruits)
   table.read(from: db, name: "apples")
   |> should.be_ok
   |> pprint.format
@@ -15,7 +15,7 @@ pub fn apples_table_test() {
 }
 
 pub fn select_apples_test() {
-  use db <- sample.db()
+  use db <- sample.db(sample.fruits)
   table.read(from: db, name: "apples")
   |> should.be_ok
   |> table.select(["name"])
@@ -24,7 +24,7 @@ pub fn select_apples_test() {
 }
 
 pub fn filter_red_apples_test() {
-  use db <- sample.db()
+  use db <- sample.db(sample.fruits)
   table.read(from: db, name: "apples")
   |> should.be_ok
   |> table.filter(fn(row) {

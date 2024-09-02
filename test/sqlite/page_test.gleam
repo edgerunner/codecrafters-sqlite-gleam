@@ -4,7 +4,7 @@ import sample
 import sqlite/page
 
 pub fn first_page_test() {
-  use db <- sample.db
+  use db <- sample.db(sample.fruits)
 
   page.read(from: db, page: 1)
   |> pprint.format
@@ -12,7 +12,7 @@ pub fn first_page_test() {
 }
 
 pub fn second_page_test() {
-  use db <- sample.db
+  use db <- sample.db(sample.fruits)
 
   page.read(from: db, page: 2)
   |> pprint.format

@@ -5,7 +5,7 @@ import sqlite/serial_type
 import sqlite/value
 
 pub fn first_value_of_first_record_test() {
-  use fs <- sample.stream(0x1fa7)
+  use fs <- sample.stream(sample.fruits, 0x1fa7)
 
   value.read(fs, serial_type.Text(16))
   |> pprint.format
@@ -13,7 +13,7 @@ pub fn first_value_of_first_record_test() {
 }
 
 pub fn second_value_of_first_record_test() {
-  use fs <- sample.stream(0x1fb7)
+  use fs <- sample.stream(sample.fruits, 0x1fb7)
 
   value.read(fs, serial_type.Text(6))
   |> pprint.format
@@ -21,7 +21,7 @@ pub fn second_value_of_first_record_test() {
 }
 
 pub fn int8_in_record_test() {
-  use fs <- sample.stream(0x2ff3)
+  use fs <- sample.stream(sample.fruits, 0x2ff3)
 
   value.read(fs, serial_type.Int8)
   |> pprint.format
