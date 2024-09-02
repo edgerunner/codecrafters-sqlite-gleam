@@ -1,0 +1,42 @@
+---
+version: 1.2.1
+title: select_apples
+file: ./test/sqlite/table_test.gleam
+test_name: select_apples_test
+---
+Table(
+  dict.from_list([
+    #(1, [Text("Granny Smith")]),
+    #(2, [Text("Fuji")]),
+    #(3, [Text("Honeycrisp")]),
+    #(4, [Text("Golden Delicious")]),
+  ]),
+  Table(
+    "apples",
+    "apples",
+    2,
+    "CREATE TABLE apples
+(
+	id integer primary key autoincrement,
+	name text,
+	color text
+)",
+    [
+      ColumnDefinition(
+        "id",
+        Integer,
+        PrimaryWithAutoIncrement,
+      ),
+      ColumnDefinition(
+        "name",
+        Text,
+        NotPrimaryKey,
+      ),
+      ColumnDefinition(
+        "color",
+        Text,
+        NotPrimaryKey,
+      ),
+    ],
+  ),
+)

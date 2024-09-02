@@ -32,3 +32,16 @@ fn add_rows_to_table(table: Table, from cells: List(Cell)) -> Table {
   })
   |> fn(rows) { Table(..table, rows:) }
 }
+
+pub fn select(from table: Table, columns columns: List(String)) -> Table {
+  let column_indices =
+    list.filter_map(columns, schema.get_column_index(from: table.schema, for: _))
+
+  let rows =
+    dict.map_values(table.rows, with: fn(_id, row) {
+      use column_index <- list.filter_map(column_indices)
+      row |> list.drop(column_index) |> list.first
+    })
+
+  Table(..table, rows:)
+}
