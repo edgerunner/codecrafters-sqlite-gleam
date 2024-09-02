@@ -42,9 +42,8 @@ pub fn main() {
         file_stream.open(database_file_path, [file_open_mode.Read])
 
       let db = db.read(fs)
-      let schema = schema.read(from: db)
 
-      schema.tables
+      schema.read(from: db).tables
       |> list.map(fn(table) { table.name })
       |> string.join(" ")
       |> io.println
@@ -53,17 +52,14 @@ pub fn main() {
       let assert Ok(fs) =
         file_stream.open(database_file_path, [file_open_mode.Read])
       let db = db.read(fs)
-      let schema = schema.read(from: db)
       let assert Ok(sql) = sql.parse(sql_string)
 
       case sql {
         Select(Count(_), table_name, _) -> {
-          let assert Ok(table) =
-            schema.get_table(called: table_name, from: schema)
-          let root_page = page.read(from: db, page: table.root_page)
+          let assert Ok(from_table) = table.read(from: db, name: table_name)
 
-          root_page.pointers
-          |> list.length
+          from_table.rows
+          |> dict.size
           |> int.to_string
           |> io.println
         }
