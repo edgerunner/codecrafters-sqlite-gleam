@@ -13,14 +13,27 @@ pub type Table {
 
 pub fn read(from db: DB, name table_name: String) -> Result(Table, Nil) {
   use schema <- result.map(schema.read(db) |> schema.get_table(table_name))
-  let root_page = page.read(from: db, page: schema.root_page)
-  let root_cells = cell.read_all(from: db, in: schema.root_page)
-  case root_page.page_type {
-    page.Table ->
-      Table(rows: dict.new(), schema:)
-      |> add_rows_to_table(root_cells)
+  traverse_page(
+    db:,
+    page: schema.root_page,
+    table: Table(rows: dict.new(), schema:),
+  )
+}
 
-    _ -> todo
+fn traverse_page(db db: DB, page page_number: Int, table table: Table) {
+  let page = page.read(from: db, page: page_number)
+  let cells = cell.read_all(from: db, in: page_number)
+  case page.node_type {
+    page.Leaf -> add_rows_to_table(table, from: cells)
+    page.Interior(right_pointer:) -> {
+      use table, cell <- list.fold(over: cells, from: table)
+      let assert cell.TableInteriorCell(left_child_pointer:, ..) = cell
+      traverse_page(db:, page: left_child_pointer, table:)
+    }
+    // |> case right_pointer {
+    //   x if x > 1 -> traverse_page(db:, page: right_pointer, table: _)
+    //   _ -> fn(table) { table }
+    // }
   }
 }
 

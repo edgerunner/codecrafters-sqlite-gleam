@@ -1,0 +1,114 @@
+---
+version: 1.2.1
+title: pink_eyed_superheroes_table
+file: ./test/sqlite/table_test.gleam
+test_name: pink_eyed_superheroes_table_test
+---
+Table(
+  dict.from_list([
+    #(1085, [
+      Null,
+      Text("Felicity (New Earth)"),
+      Text("Pink Eyes"),
+      Text("White Hair"),
+      Integer(25),
+      Text("1983, July"),
+      Text("1983"),
+    ]),
+    #(2729, [
+      Null,
+      Text("Thrust (New Earth)"),
+      Text("Pink Eyes"),
+      Text("Blond Hair"),
+      Integer(8),
+      Text("1992"),
+      Text("1992"),
+    ]),
+    #(297, [
+      Null,
+      Text("Stealth (New Earth)"),
+      Text("Pink Eyes"),
+      Text("White Hair"),
+      Integer(98),
+      Text("1989, February"),
+      Text("1989"),
+    ]),
+    #(3289, [
+      Null,
+      Text("Angora Lapin (New Earth)"),
+      Text("Pink Eyes"),
+      Text("White Hair"),
+      Integer(6),
+      Text("1993, June"),
+      Text("1993"),
+    ]),
+    #(3913, [
+      Null,
+      Text("Matris Ater Clementia (New Earth)"),
+      Text("Pink Eyes"),
+      Null,
+      Integer(4),
+      Text("2008, July"),
+      Text("2008"),
+    ]),
+    #(790, [
+      Null,
+      Text("Tobias Whale (New Earth)"),
+      Text("Pink Eyes"),
+      Null,
+      Integer(36),
+      Text("1977, April"),
+      Text("1977"),
+    ]),
+  ]),
+  Table(
+    "superheroes",
+    "superheroes",
+    2,
+    "CREATE TABLE "superheroes" (id integer primary key autoincrement, name text not null, eye_color text, hair_color text, appearance_count integer, first_appearance text, first_appearance_year text)",
+    [
+      ColumnDefinition(
+        "id",
+        Integer,
+        PrimaryWithAutoIncrement,
+        False,
+      ),
+      ColumnDefinition(
+        "name",
+        Text,
+        NotPrimaryKey,
+        True,
+      ),
+      ColumnDefinition(
+        "eye_color",
+        Text,
+        NotPrimaryKey,
+        False,
+      ),
+      ColumnDefinition(
+        "hair_color",
+        Text,
+        NotPrimaryKey,
+        False,
+      ),
+      ColumnDefinition(
+        "appearance_count",
+        Integer,
+        NotPrimaryKey,
+        False,
+      ),
+      ColumnDefinition(
+        "first_appearance",
+        Text,
+        NotPrimaryKey,
+        False,
+      ),
+      ColumnDefinition(
+        "first_appearance_year",
+        Text,
+        NotPrimaryKey,
+        False,
+      ),
+    ],
+  ),
+)

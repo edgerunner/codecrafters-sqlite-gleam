@@ -1,6 +1,7 @@
 import birdie
 import glacier/should
 import gleam/dict
+import gleam/result
 import pprint
 import sample
 import sqlite/table
@@ -33,4 +34,17 @@ pub fn filter_red_apples_test() {
   })
   |> pprint.format
   |> birdie.snap("filter_red_apples")
+}
+
+pub fn pink_eyed_superheroes_table_test() {
+  use db <- sample.db(sample.superheroes)
+  table.read(from: db, name: "superheroes")
+  |> should.be_ok
+  |> table.filter(fn(row) {
+    dict.get(row, "eye_color")
+    |> result.map(fn(color) { color == value.Text("Pink Eyes") })
+    |> result.unwrap(False)
+  })
+  |> pprint.format
+  |> birdie.snap("pink_eyed_superheroes_table")
 }
