@@ -7,7 +7,7 @@ test_name: filter_red_apples_test
 Table(
   dict.from_list([
     #(2, [
-      Null,
+      Integer(2),
       Text("Fuji"),
       Text("Red"),
     ]),

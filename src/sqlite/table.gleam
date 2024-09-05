@@ -41,7 +41,11 @@ fn add_rows_to_table(table: Table, from cells: List(Cell)) -> Table {
   let Table(rows:, ..) = table
   list.fold(over: cells, from: rows, with: fn(rows, cell) {
     let assert cell.TableLeafCell(row_id:, record:, ..) = cell
-    dict.insert(into: rows, for: row_id, insert: record)
+    let record_with_id = case record {
+      [value.Null, ..rest] -> [value.Integer(row_id), ..rest]
+      _ -> record
+    }
+    dict.insert(into: rows, for: row_id, insert: record_with_id)
   })
   |> fn(rows) { Table(..table, rows:) }
 }

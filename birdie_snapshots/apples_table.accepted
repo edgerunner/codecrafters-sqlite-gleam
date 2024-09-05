@@ -7,22 +7,22 @@ test_name: apples_table_test
 Table(
   dict.from_list([
     #(1, [
-      Null,
+      Integer(1),
       Text("Granny Smith"),
       Text("Light Green"),
     ]),
     #(2, [
-      Null,
+      Integer(2),
       Text("Fuji"),
       Text("Red"),
     ]),
     #(3, [
-      Null,
+      Integer(3),
       Text("Honeycrisp"),
       Text("Blush Red"),
     ]),
     #(4, [
-      Null,
+      Integer(4),
       Text("Golden Delicious"),
       Text("Yellow"),
     ]),

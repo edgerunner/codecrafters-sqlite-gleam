@@ -7,7 +7,7 @@ test_name: pink_eyed_superheroes_table_test
 Table(
   dict.from_list([
     #(1085, [
-      Null,
+      Integer(1085),
       Text("Felicity (New Earth)"),
       Text("Pink Eyes"),
       Text("White Hair"),
@@ -16,7 +16,7 @@ Table(
       Text("1983"),
     ]),
     #(2729, [
-      Null,
+      Integer(2729),
       Text("Thrust (New Earth)"),
       Text("Pink Eyes"),
       Text("Blond Hair"),
@@ -25,7 +25,7 @@ Table(
       Text("1992"),
     ]),
     #(297, [
-      Null,
+      Integer(297),
       Text("Stealth (New Earth)"),
       Text("Pink Eyes"),
       Text("White Hair"),
@@ -34,7 +34,7 @@ Table(
       Text("1989"),
     ]),
     #(3289, [
-      Null,
+      Integer(3289),
       Text("Angora Lapin (New Earth)"),
       Text("Pink Eyes"),
       Text("White Hair"),
@@ -43,7 +43,7 @@ Table(
       Text("1993"),
     ]),
     #(3913, [
-      Null,
+      Integer(3913),
       Text("Matris Ater Clementia (New Earth)"),
       Text("Pink Eyes"),
       Null,
@@ -52,7 +52,7 @@ Table(
       Text("2008"),
     ]),
     #(790, [
-      Null,
+      Integer(790),
       Text("Tobias Whale (New Earth)"),
       Text("Pink Eyes"),
       Null,
