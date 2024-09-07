@@ -4,7 +4,7 @@ title: create_table
 file: ./test/sql_test.gleam
 test_name: create_table_test
 ---
-CreateTable(
+Create(Table(
   "apples",
   [
     ColumnDefinition(
@@ -26,4 +26,4 @@ CreateTable(
       False,
     ),
   ],
-)
+))

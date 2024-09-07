@@ -3,7 +3,7 @@ import party.{type ParseError, type Parser, do, try}
 
 pub type SQL {
   Select(Select, from: String, where: Where)
-  CreateTable(name: String, columns: List(ColumnDefinition))
+  Create(Create)
 }
 
 pub type Select {
@@ -14,6 +14,10 @@ pub type Select {
 pub type Where {
   Everything
   Equality(column: String, value: String)
+}
+
+pub type Create {
+  Table(name: String, columns: List(ColumnDefinition))
 }
 
 pub type Error {
@@ -89,7 +93,7 @@ fn create_table() -> Parser(SQL, Error) {
   use name <- do(party.either(quoted(identifier()), identifier()))
   use _ <- do(space())
   use columns <- do(parens(column_defs()))
-  party.return(CreateTable(name:, columns:))
+  party.return(Create(Table(name:, columns:)))
 }
 
 fn column_defs() -> Parser(List(ColumnDefinition), Error) {

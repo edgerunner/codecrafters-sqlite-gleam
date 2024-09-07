@@ -30,7 +30,7 @@ pub fn read(from db: DB) -> Schema {
       value.Text(sql),
     ] = record
 
-    let assert Ok(sql.CreateTable(columns:, ..)) = sql.parse(sql)
+    let assert Ok(sql.Create(sql.Table(columns:, ..))) = sql.parse(sql)
 
     Table(name:, tbl_name:, root_page:, sql:, columns:)
   })

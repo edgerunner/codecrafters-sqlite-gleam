@@ -82,8 +82,8 @@ pub fn main() {
             |> io.println
           })
         }
-        sql.CreateTable(_, _) ->
-          panic as "ERROR: Table creation not implemented yet"
+        sql.Create(_) ->
+          panic as "ERROR: Table/index creation not implemented yet"
       }
     }
     _ -> {
