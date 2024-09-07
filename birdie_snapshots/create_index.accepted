@@ -1,0 +1,11 @@
+---
+version: 1.2.1
+title: create_index
+file: ./test/sql_test.gleam
+test_name: create_index_test
+---
+Create(Index(
+  "idx_companies_country",
+  "companies",
+  ["country"],
+))

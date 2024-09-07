@@ -50,3 +50,11 @@ pub fn create_table_test() {
   |> pprint.format
   |> birdie.snap("create_table")
 }
+
+pub fn create_index_test() {
+  "CREATE INDEX idx_companies_country\n\ton companies (country)"
+  |> sql.parse
+  |> should.be_ok
+  |> pprint.format
+  |> birdie.snap("create_index")
+}

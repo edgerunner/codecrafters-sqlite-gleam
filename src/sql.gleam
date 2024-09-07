@@ -18,6 +18,7 @@ pub type Where {
 
 pub type Create {
   Table(name: String, columns: List(ColumnDefinition))
+  Index(name: String, table: String, columns: List(String))
 }
 
 pub type Error {
@@ -52,7 +53,7 @@ pub fn parse(input: String) -> Result(SQL, ParseError(Error)) {
 }
 
 pub fn sql() -> Parser(SQL, Error) {
-  party.choice([select(), create_table()])
+  party.choice([select(), create()])
 }
 
 fn select() -> Parser(SQL, Error) {
@@ -86,14 +87,28 @@ fn where_clause() -> Parser(Where, Error) {
   party.return(Equality(column:, value:))
 }
 
-fn create_table() -> Parser(SQL, Error) {
-  use _ <- do(
-    party.all([command("CREATE"), space1(), command("TABLE"), space1()]),
-  )
+fn create() -> Parser(SQL, Error) {
+  use _ <- do(party.all([command("CREATE"), space1()]))
+  party.either(create_table(), create_index())
+  |> party.map(Create)
+}
+
+fn create_table() -> Parser(Create, Error) {
+  use _ <- do(party.all([command("TABLE"), space1()]))
   use name <- do(party.either(quoted(identifier()), identifier()))
   use _ <- do(space())
   use columns <- do(parens(column_defs()))
-  party.return(Create(Table(name:, columns:)))
+  party.return(Table(name:, columns:))
+}
+
+fn create_index() -> Parser(Create, Error) {
+  use _ <- do(party.all([command("INDEX"), space1()]))
+  use name <- do(party.either(quoted(identifier()), identifier()))
+  use _ <- do(party.all([space1(), command("ON"), space1()]))
+  use table <- do(party.either(quoted(identifier()), identifier()))
+  use _ <- do(space())
+  use columns <- do(parens(party.sep1(identifier(), list_comma())))
+  party.return(Index(name:, table:, columns:))
 }
 
 fn column_defs() -> Parser(List(ColumnDefinition), Error) {
