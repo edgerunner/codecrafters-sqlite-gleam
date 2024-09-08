@@ -95,7 +95,7 @@ fn create() -> Parser(SQL, Error) {
 
 fn create_table() -> Parser(Create, Error) {
   use _ <- do(party.all([command("TABLE"), space1()]))
-  use name <- do(party.either(quoted(identifier()), identifier()))
+  use name <- do(identifier())
   use _ <- do(space())
   use columns <- do(parens(column_defs()))
   party.return(Table(name:, columns:))
@@ -103,9 +103,9 @@ fn create_table() -> Parser(Create, Error) {
 
 fn create_index() -> Parser(Create, Error) {
   use _ <- do(party.all([command("INDEX"), space1()]))
-  use name <- do(party.either(quoted(identifier()), identifier()))
+  use name <- do(identifier())
   use _ <- do(party.all([space1(), command("ON"), space1()]))
-  use table <- do(party.either(quoted(identifier()), identifier()))
+  use table <- do(identifier())
   use _ <- do(space())
   use columns <- do(parens(party.sep1(identifier(), list_comma())))
   party.return(Index(name:, table:, columns:))
@@ -167,11 +167,21 @@ fn command(token: String) -> Parser(Nil, Error) {
 }
 
 fn identifier() {
+  party.either(quoted_identifier(), freestanding_identifier())
+}
+
+fn freestanding_identifier() {
   use first <- do(party.letter())
   use rest <- do(
     party.many_concat(party.either(party.alphanum(), party.string("_"))),
   )
   party.return(first <> rest)
+}
+
+fn quoted_identifier() {
+  party.choice([party.alphanum(), party.whitespace1(), party.string("_")])
+  |> party.many1_concat
+  |> quoted
 }
 
 fn parens(parser: Parser(a, e)) -> Parser(a, e) {
