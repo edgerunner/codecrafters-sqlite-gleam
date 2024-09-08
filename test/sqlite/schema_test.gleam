@@ -18,6 +18,13 @@ pub fn superheroes_schema_test() {
   |> birdie.snap("superheroes_schema")
 }
 
+pub fn companies_schema_test() {
+  use db <- sample.db(sample.companies)
+  schema.read(from: db)
+  |> pprint.format
+  |> birdie.snap("companies_schema")
+}
+
 pub fn column_index_test() {
   use db <- sample.db(sample.fruits)
   schema.read(from: db)

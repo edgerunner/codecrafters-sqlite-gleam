@@ -4,87 +4,90 @@ title: Sample schema dump
 file: ./test/sqlite/schema_test.gleam
 test_name: sample_schema_test
 ---
-Schema([
-  Table(
-    "apples",
-    "apples",
-    2,
-    "CREATE TABLE apples
-(
-	id integer primary key autoincrement,
-	name text,
-	color text
-)",
-    [
-      ColumnDefinition(
-        "id",
-        Integer,
-        PrimaryWithAutoIncrement,
-        False,
-      ),
-      ColumnDefinition(
-        "name",
-        Text,
-        NotPrimaryKey,
-        False,
-      ),
-      ColumnDefinition(
-        "color",
-        Text,
-        NotPrimaryKey,
-        False,
-      ),
-    ],
-  ),
-  Table(
-    "sqlite_sequence",
-    "sqlite_sequence",
-    3,
-    "CREATE TABLE sqlite_sequence(name,seq)",
-    [
-      ColumnDefinition(
-        "name",
-        Blob,
-        NotPrimaryKey,
-        False,
-      ),
-      ColumnDefinition(
-        "seq",
-        Blob,
-        NotPrimaryKey,
-        False,
-      ),
-    ],
-  ),
-  Table(
-    "oranges",
-    "oranges",
-    4,
-    "CREATE TABLE oranges
+Schema(
+  [
+    Table(
+      "oranges",
+      "oranges",
+      4,
+      "CREATE TABLE oranges
 (
 	id integer primary key autoincrement,
 	name text,
 	description text
 )",
-    [
-      ColumnDefinition(
-        "id",
-        Integer,
-        PrimaryWithAutoIncrement,
-        False,
-      ),
-      ColumnDefinition(
-        "name",
-        Text,
-        NotPrimaryKey,
-        False,
-      ),
-      ColumnDefinition(
-        "description",
-        Text,
-        NotPrimaryKey,
-        False,
-      ),
-    ],
-  ),
-])
+      [
+        ColumnDefinition(
+          "id",
+          Integer,
+          PrimaryWithAutoIncrement,
+          False,
+        ),
+        ColumnDefinition(
+          "name",
+          Text,
+          NotPrimaryKey,
+          False,
+        ),
+        ColumnDefinition(
+          "description",
+          Text,
+          NotPrimaryKey,
+          False,
+        ),
+      ],
+    ),
+    Table(
+      "sqlite_sequence",
+      "sqlite_sequence",
+      3,
+      "CREATE TABLE sqlite_sequence(name,seq)",
+      [
+        ColumnDefinition(
+          "name",
+          Blob,
+          NotPrimaryKey,
+          False,
+        ),
+        ColumnDefinition(
+          "seq",
+          Blob,
+          NotPrimaryKey,
+          False,
+        ),
+      ],
+    ),
+    Table(
+      "apples",
+      "apples",
+      2,
+      "CREATE TABLE apples
+(
+	id integer primary key autoincrement,
+	name text,
+	color text
+)",
+      [
+        ColumnDefinition(
+          "id",
+          Integer,
+          PrimaryWithAutoIncrement,
+          False,
+        ),
+        ColumnDefinition(
+          "name",
+          Text,
+          NotPrimaryKey,
+          False,
+        ),
+        ColumnDefinition(
+          "color",
+          Text,
+          NotPrimaryKey,
+          False,
+        ),
+      ],
+    ),
+  ],
+  [],
+)

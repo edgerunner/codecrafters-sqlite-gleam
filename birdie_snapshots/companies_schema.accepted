@@ -1,8 +1,8 @@
 ---
 version: 1.2.1
-title: superheroes_schema
+title: companies_schema
 file: ./test/sqlite/schema_test.gleam
-test_name: superheroes_schema_test
+test_name: companies_schema_test
 ---
 Schema(
   [
@@ -27,10 +27,13 @@ Schema(
       ],
     ),
     Table(
-      "superheroes",
-      "superheroes",
+      "companies",
+      "companies",
       2,
-      "CREATE TABLE "superheroes" (id integer primary key autoincrement, name text not null, eye_color text, hair_color text, appearance_count integer, first_appearance text, first_appearance_year text)",
+      "CREATE TABLE companies
+(
+	id integer primary key autoincrement
+, name text, domain text, year_founded text, industry text, "size range" text, locality text, country text, current_employees text, total_employees text)",
       [
         ColumnDefinition(
           "id",
@@ -42,34 +45,52 @@ Schema(
           "name",
           Text,
           NotPrimaryKey,
-          True,
+          False,
         ),
         ColumnDefinition(
-          "eye_color",
+          "domain",
           Text,
           NotPrimaryKey,
           False,
         ),
         ColumnDefinition(
-          "hair_color",
+          "year_founded",
           Text,
           NotPrimaryKey,
           False,
         ),
         ColumnDefinition(
-          "appearance_count",
-          Integer,
-          NotPrimaryKey,
-          False,
-        ),
-        ColumnDefinition(
-          "first_appearance",
+          "industry",
           Text,
           NotPrimaryKey,
           False,
         ),
         ColumnDefinition(
-          "first_appearance_year",
+          "size range",
+          Text,
+          NotPrimaryKey,
+          False,
+        ),
+        ColumnDefinition(
+          "locality",
+          Text,
+          NotPrimaryKey,
+          False,
+        ),
+        ColumnDefinition(
+          "country",
+          Text,
+          NotPrimaryKey,
+          False,
+        ),
+        ColumnDefinition(
+          "current_employees",
+          Text,
+          NotPrimaryKey,
+          False,
+        ),
+        ColumnDefinition(
+          "total_employees",
           Text,
           NotPrimaryKey,
           False,
@@ -77,5 +98,14 @@ Schema(
       ],
     ),
   ],
-  [],
+  [
+    Index(
+      "idx_companies_country",
+      "companies",
+      4,
+      "CREATE INDEX idx_companies_country
+	on companies (country)",
+      ["country"],
+    ),
+  ],
 )
