@@ -70,3 +70,12 @@ pub fn get_column_index(from table: Table, for name: String) -> Result(Int, Nil)
     _, _ -> outcome
   }
 }
+
+pub fn get_index(
+  from schema: Schema,
+  on table_name: String,
+  for column: String,
+) -> Result(Index, Nil) {
+  use index <- list.find(in: schema.indices)
+  index.tbl_name == table_name && list.contains(index.columns, column)
+}

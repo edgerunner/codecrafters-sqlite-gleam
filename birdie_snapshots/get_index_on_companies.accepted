@@ -1,0 +1,14 @@
+---
+version: 1.2.1
+title: get_index_on_companies
+file: ./test/sqlite/schema_test.gleam
+test_name: get_index_on_companies_test
+---
+Index(
+  "idx_companies_country",
+  "companies",
+  4,
+  "CREATE INDEX idx_companies_country
+	on companies (country)",
+  ["country"],
+)

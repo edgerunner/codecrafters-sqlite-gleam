@@ -34,3 +34,12 @@ pub fn column_index_test() {
   |> should.be_ok
   |> should.equal(1)
 }
+
+pub fn get_index_on_companies_test() {
+  use db <- sample.db(sample.companies)
+  schema.read(from: db)
+  |> schema.get_index(on: "companies", for: "country")
+  |> should.be_ok
+  |> pprint.format
+  |> birdie.snap("get_index_on_companies")
+}
