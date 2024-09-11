@@ -61,17 +61,21 @@ pub fn main() {
           |> int.to_string
           |> io.println
         }
-        Select(sql.Columns(columns), table_name, where) -> {
+        Select(sql.Columns(columns), table_name, sql.Everything) -> {
+          let assert Ok(from_table) = table.read(from: db, name: table_name)
+          from_table
+          |> table.select(columns:)
+          |> table.rows
+          |> list.each(fn(row) {
+            list.map(row, value.to_string)
+            |> string.join("|")
+            |> io.println
+          })
+        }
+        Select(sql.Columns(columns), table_name, sql.Equality(column:, value:)) -> {
           let assert Ok(from_table) = table.read(from: db, name: table_name)
 
-          let filter = case where {
-            sql.Everything -> fn(_) { True }
-            sql.Equality(column:, value:) -> equality_filter(
-              column:,
-              value:,
-              row: _,
-            )
-          }
+          let filter = equality_filter(column:, value:, row: _)
 
           table.filter(from_table, filter)
           |> table.select(columns:)
