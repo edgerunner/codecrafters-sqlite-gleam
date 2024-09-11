@@ -1,4 +1,7 @@
 import birdie
+import glacier/should
+import gleam/list
+import gleam/order
 import pprint
 import sample
 import sqlite/serial_type
@@ -26,4 +29,19 @@ pub fn int8_in_record_test() {
   value.read(fs, serial_type.Int8)
   |> pprint.format
   |> birdie.snap("Int8 in record")
+}
+
+pub fn comparison_test() {
+  let comparisons = [
+    #(value.Null, value.Null, order.Eq),
+    #(value.Null, value.Floating(5.3), order.Lt),
+    #(value.Floating(5.3), value.Integer(5), order.Gt),
+    #(value.Floating(5.0), value.Integer(5), order.Eq),
+    #(value.Text("abc"), value.Text("bad"), order.Lt),
+    #(value.Text("abc"), value.Integer(7), order.Gt),
+  ]
+  use #(left, right, expect) <- list.each(comparisons)
+
+  value.compare(left, right)
+  |> should.equal(expect)
 }

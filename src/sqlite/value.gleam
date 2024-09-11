@@ -1,7 +1,9 @@
 import file_streams/file_stream.{type FileStream}
 import gleam/float
 import gleam/int
+import gleam/order.{type Order, Eq, Gt, Lt}
 import gleam/result
+import gleam/string
 import sqlite/serial_type.{type SerialType}
 
 pub type Value {
@@ -39,5 +41,28 @@ pub fn to_string(value: Value) -> String {
     Floating(f) -> float.to_string(f)
     Blob(_b) -> "BLOB"
     Text(t) -> t
+  }
+}
+
+/// Compares two `Value`s as described in SQLite
+/// [record sort order](https://www.sqlite.org/fileformat.html#record_sort_order)
+pub fn compare(left: Value, right: Value) -> Order {
+  case left, right {
+    Null, Null -> Eq
+    Integer(l), Integer(r) -> int.compare(l, r)
+    Floating(l), Floating(r) -> float.compare(l, r)
+    Text(l), Text(r) -> string.compare(l, r)
+    Blob(l), Blob(r) if l == r -> Eq
+    Integer(il), Floating(fr) -> int.to_float(il) |> float.compare(fr)
+    Floating(fl), Integer(ir) -> int.to_float(ir) |> float.compare(fl, _)
+    Null, _ -> Lt
+    _, Null -> Gt
+    Integer(_), _ -> Lt
+    _, Integer(_) -> Gt
+    Floating(_), _ -> Lt
+    _, Floating(_) -> Gt
+    Text(_), _ -> Lt
+    _, Text(_) -> Gt
+    _, _ -> Lt
   }
 }
