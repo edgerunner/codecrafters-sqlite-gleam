@@ -11,6 +11,7 @@ import gleam/result
 import gleam/string
 import sql.{Count, Select}
 import sqlite/db
+import sqlite/index
 import sqlite/schema
 import sqlite/table
 import sqlite/value.{type Value}
@@ -73,18 +74,39 @@ pub fn main() {
           })
         }
         Select(sql.Columns(columns), table_name, sql.Equality(column:, value:)) -> {
-          let assert Ok(from_table) = table.read(from: db, name: table_name)
+          case
+            schema.read(db) |> schema.get_index(on: table_name, for: column)
+          {
+            // no relevant index. load the whole table and brute-force it
+            Error(Nil) -> {
+              let assert Ok(from_table) = table.read(from: db, name: table_name)
 
-          let filter = equality_filter(column:, value:, row: _)
+              let filter = equality_filter(column:, value:, row: _)
 
-          table.filter(from_table, filter)
-          |> table.select(columns:)
-          |> table.rows
-          |> list.each(fn(row) {
-            list.map(row, value.to_string)
-            |> string.join("|")
-            |> io.println
-          })
+              table.filter(from_table, filter)
+              |> table.select(columns:)
+              |> table.rows
+              |> list.each(fn(row) {
+                list.map(row, value.to_string)
+                |> string.join("|")
+                |> io.println
+              })
+            }
+            // there's a matching index, use it to pick relevant records.
+            Ok(index) -> {
+              let assert Ok(results) =
+                index.search(in: db, on: index, for: value.Text(value))
+                |> table.get_rows(from: db, name: table_name)
+
+              table.select(from: results, columns:)
+              |> table.rows
+              |> list.each(fn(row) {
+                list.map(row, value.to_string)
+                |> string.join("|")
+                |> io.println
+              })
+            }
+          }
         }
         sql.Create(_) ->
           panic as "ERROR: Table/index creation not implemented yet"
