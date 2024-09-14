@@ -43,6 +43,7 @@ pub fn main() {
       let db = db.read(fs)
 
       schema.read(from: db).tables
+      |> list.reverse
       |> list.map(fn(table) { table.name })
       |> string.join(" ")
       |> io.println
