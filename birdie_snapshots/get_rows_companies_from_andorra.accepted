@@ -6,7 +6,7 @@ test_name: get_rows_companies_from_andorra_test
 ---
 [
   [
-    Null,
+    Integer(8188),
     Text("find your realty Â· property finders"),
     Text("findyourrealty.com"),
     Null,
@@ -18,7 +18,7 @@ test_name: get_rows_companies_from_andorra_test
     Text("2"),
   ],
   [
-    Null,
+    Integer(31034),
     Text("creu roja andorrana"),
     Text("creuroja.ad"),
     Text("1980.0"),

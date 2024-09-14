@@ -105,7 +105,13 @@ fn get_rows_from_page(
     _, [] -> #(results, [])
     // there's a matching id, drop the id, add the row
     cell.TableLeafCell(row_id:, record:, ..), [id, ..rest] if id == row_id -> #(
-      dict.insert(results, id, record),
+      {
+        let record_with_id = case record {
+          [value.Null, ..rest] -> [value.Integer(row_id), ..rest]
+          _ -> record
+        }
+        dict.insert(results, id, record_with_id)
+      },
       rest,
     )
     // mismatched id, just skip and continue
