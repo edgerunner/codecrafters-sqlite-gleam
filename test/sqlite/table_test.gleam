@@ -4,6 +4,8 @@ import gleam/dict
 import gleam/result
 import pprint
 import sample
+import sqlite/index
+import sqlite/schema
 import sqlite/table
 import sqlite/value
 
@@ -47,4 +49,18 @@ pub fn pink_eyed_superheroes_table_test() {
   })
   |> pprint.format
   |> birdie.snap("pink_eyed_superheroes_table")
+}
+
+pub fn get_rows_companies_from_andorra_test() {
+  use db <- sample.db(sample.companies)
+
+  schema.read(db)
+  |> schema.get_index(on: "companies", for: "country")
+  |> should.be_ok
+  |> index.search(in: db, on: _, for: value.Text("andorra"))
+  |> table.get_rows(from: db, name: "companies")
+  |> should.be_ok
+  |> table.rows
+  |> pprint.format
+  |> birdie.snap("get_rows_companies_from_andorra")
 }

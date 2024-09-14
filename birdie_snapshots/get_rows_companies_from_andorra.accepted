@@ -1,0 +1,32 @@
+---
+version: 1.2.1
+title: get_rows_companies_from_andorra
+file: ./test/sqlite/table_test.gleam
+test_name: get_rows_companies_from_andorra_test
+---
+[
+  [
+    Null,
+    Text("find your realty Â· property finders"),
+    Text("findyourrealty.com"),
+    Null,
+    Text("real estate"),
+    Text("1 - 10"),
+    Text("andorra la vella, andorra la vella, andorra"),
+    Text("andorra"),
+    Text("2"),
+    Text("2"),
+  ],
+  [
+    Null,
+    Text("creu roja andorrana"),
+    Text("creuroja.ad"),
+    Text("1980.0"),
+    Text("civic & social organization"),
+    Text("1 - 10"),
+    Text("santa coloma, andorra la vella, andorra"),
+    Text("andorra"),
+    Text("2"),
+    Text("5"),
+  ],
+]

@@ -1,4 +1,5 @@
 import gleam/dict.{type Dict}
+import gleam/int
 import gleam/list
 import gleam/result
 import sqlite/cell.{type Cell}
@@ -78,4 +79,47 @@ pub fn filter(
 
 pub fn rows(table: Table) -> List(List(Value)) {
   dict.values(table.rows)
+}
+
+pub fn get_rows(
+  ids ids: List(Int),
+  from db: DB,
+  name table_name: String,
+) -> Result(Table, Nil) {
+  use schema <- result.map(schema.read(db) |> schema.get_table(table_name))
+  let ids = list.sort(ids, int.compare)
+  get_rows_from_page(number: schema.root_page, ids:, db:, results: dict.new()).0
+  |> Table(schema:)
+}
+
+fn get_rows_from_page(
+  number page_number: Int,
+  ids ids: List(Int),
+  db db: DB,
+  results results: Dict(Int, List(Value)),
+) -> #(Dict(Int, List(Value)), List(Int)) {
+  let cells = cell.read_all(from: db, in: page_number)
+  use #(results, ids), cell <- list.fold(over: cells, from: #(results, ids))
+  case cell, ids {
+    // no more ids to be found, just return
+    _, [] -> #(results, [])
+    // there's a matching id, drop the id, add the row
+    cell.TableLeafCell(row_id:, record:, ..), [id, ..rest] if id == row_id -> #(
+      dict.insert(results, id, record),
+      rest,
+    )
+    // mismatched id, just skip and continue
+    cell.TableLeafCell(..), [_id, ..] -> #(results, ids)
+    // the page max id is smaller, so we skip this page entirely
+    cell.TableInteriorCell(row_id:, ..), [id, ..] if row_id < id -> #(
+      results,
+      ids,
+    )
+    // page max id is equal or larger than the next id, so the id is possibly in it.
+    // we go down to search
+    cell.TableInteriorCell(left_child_pointer:, ..), [_, ..] ->
+      get_rows_from_page(number: left_child_pointer, ids:, db:, results:)
+    // we shouldn't encounter index cells in a table page. This is an error.
+    _, _ -> panic as "Index cells in a table page"
+  }
 }
