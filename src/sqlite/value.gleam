@@ -21,9 +21,9 @@ pub fn read(fs: FileStream, stype: SerialType) -> Value {
     serial_type.One -> Ok(Integer(1))
     serial_type.Int8 -> file_stream.read_int8(fs) |> result.map(Integer)
     serial_type.Int16 -> file_stream.read_int16_be(fs) |> result.map(Integer)
-    serial_type.Int24 -> file_stream.read_int32_be(fs) |> result.map(Integer)
+    serial_type.Int24 -> read_int24_be(fs) |> result.map(Integer)
     serial_type.Int32 -> file_stream.read_int32_be(fs) |> result.map(Integer)
-    serial_type.Int48 -> file_stream.read_int32_be(fs) |> result.map(Integer)
+    serial_type.Int48 -> read_int48_be(fs) |> result.map(Integer)
     serial_type.Int64 -> file_stream.read_int64_be(fs) |> result.map(Integer)
     serial_type.Float64 ->
       file_stream.read_float64_be(fs) |> result.map(Floating)
@@ -65,4 +65,18 @@ pub fn compare(left: Value, right: Value) -> Order {
     _, Text(_) -> Gt
     _, _ -> Lt
   }
+}
+
+// HELPERS
+
+fn read_int24_be(fs: FileStream) {
+  use bytes <- result.map(file_stream.read_bytes_exact(fs, 3))
+  let assert <<int24:signed-big-24>> = bytes
+  int24
+}
+
+fn read_int48_be(fs: FileStream) {
+  use bytes <- result.map(file_stream.read_bytes_exact(fs, 6))
+  let assert <<int24:signed-big-48>> = bytes
+  int24
 }
