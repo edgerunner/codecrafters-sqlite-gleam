@@ -1,4 +1,4 @@
-[![progress-banner](https://backend.codecrafters.io/progress/sqlite/6a59818e-086a-4614-8025-4dc71921e000)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+[![progress-banner](https://backend.codecrafters.io/progress/sqlite/66c94afc-fc46-4f26-b464-fcdff97b5260)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
 
 This is a starting point for Gleam solutions to the
 ["Build Your Own SQLite" Challenge](https://codecrafters.io/challenges/sqlite).
