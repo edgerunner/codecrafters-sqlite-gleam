@@ -26,15 +26,13 @@ fn traverse_page(db db: DB, page page_number: Int, table table: Table) {
   let cells = cell.read_all(from: db, in: page_number)
   case page.node_type {
     page.Leaf -> add_rows_to_table(table, from: cells)
-    page.Interior(right_pointer:) -> {
-      use table, cell <- list.fold(over: cells, from: table)
-      let assert cell.TableInteriorCell(left_child_pointer:, ..) = cell
-      traverse_page(db:, page: left_child_pointer, table:)
-    }
-    // |> case right_pointer {
-    //   x if x > 1 -> traverse_page(db:, page: right_pointer, table: _)
-    //   _ -> fn(table) { table }
-    // }
+    page.Interior(right_pointer:) ->
+      {
+        use table, cell <- list.fold(over: cells, from: table)
+        let assert cell.TableInteriorCell(left_child_pointer:, ..) = cell
+        traverse_page(db:, page: left_child_pointer, table:)
+      }
+      |> traverse_page(db:, page: right_pointer, table: _)
   }
 }
 
@@ -99,33 +97,41 @@ fn get_rows_from_page(
   results results: Dict(Int, List(Value)),
 ) -> #(Dict(Int, List(Value)), List(Int)) {
   let cells = cell.read_all(from: db, in: page_number)
-  use #(results, ids), cell <- list.fold(over: cells, from: #(results, ids))
-  case cell, ids {
-    // no more ids to be found, just return
-    _, [] -> #(results, [])
-    // there's a matching id, drop the id, add the row
-    cell.TableLeafCell(row_id:, record:, ..), [id, ..rest] if id == row_id -> #(
-      {
-        let record_with_id = case record {
-          [value.Null, ..rest] -> [value.Integer(row_id), ..rest]
-          _ -> record
-        }
-        dict.insert(results, id, record_with_id)
-      },
-      rest,
-    )
-    // mismatched id, just skip and continue
-    cell.TableLeafCell(..), [_id, ..] -> #(results, ids)
-    // the page max id is smaller, so we skip this page entirely
-    cell.TableInteriorCell(row_id:, ..), [id, ..] if row_id < id -> #(
-      results,
-      ids,
-    )
-    // page max id is equal or larger than the next id, so the id is possibly in it.
-    // we go down to search
-    cell.TableInteriorCell(left_child_pointer:, ..), [_, ..] ->
-      get_rows_from_page(number: left_child_pointer, ids:, db:, results:)
-    // we shouldn't encounter index cells in a table page. This is an error.
-    _, _ -> panic as "Index cells in a table page"
+  let #(results, ids) = {
+    use #(results, ids), cell <- list.fold(over: cells, from: #(results, ids))
+    case cell, ids {
+      // no more ids to be found, just return
+      _, [] -> #(results, [])
+      // there's a matching id, drop the id, add the row
+      cell.TableLeafCell(row_id:, record:, ..), [id, ..rest] if id == row_id -> #(
+        {
+          let record_with_id = case record {
+            [value.Null, ..rest] -> [value.Integer(row_id), ..rest]
+            _ -> record
+          }
+          dict.insert(results, id, record_with_id)
+        },
+        rest,
+      )
+      // mismatched id, just skip and continue
+      cell.TableLeafCell(..), [_id, ..] -> #(results, ids)
+      // the page max id is smaller, so we skip this page entirely
+      cell.TableInteriorCell(row_id:, ..), [id, ..] if row_id < id -> #(
+        results,
+        ids,
+      )
+      // page max id is equal or larger than the next id, so the id is possibly in it.
+      // we go down to search
+      cell.TableInteriorCell(left_child_pointer:, ..), [_, ..] ->
+        get_rows_from_page(number: left_child_pointer, ids:, db:, results:)
+      // we shouldn't encounter index cells in a table page. This is an error.
+      _, _ -> panic as "Index cells in a table page"
+    }
+  }
+  case ids, page.read(db, page_number) {
+    // read the rightmost child page if there still is more ids to find
+    [_, ..], page.Page(node_type: page.Interior(right_pointer:), ..) ->
+      get_rows_from_page(number: right_pointer, ids:, db:, results:)
+    _, _ -> #(results, ids)
   }
 }

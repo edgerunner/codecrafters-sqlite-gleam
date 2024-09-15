@@ -4,7 +4,4 @@ title: companies_country_index
 file: ./test/sqlite/index_test.gleam
 test_name: companies_country_index_test
 ---
-[
-  1698465034, 538224138, 31055639,
-  1466841088,
-]
+[6634629, 2102438, 121311, 5729848]

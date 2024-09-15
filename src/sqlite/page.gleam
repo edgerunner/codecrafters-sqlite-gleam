@@ -40,9 +40,9 @@ pub fn read(from db: db.DB, page page_number: Int) -> Page {
     file_stream.read_uint8(fs)
   {
     // A value of 2 (0x02) means the page is an interior index b-tree page.
-    Ok(0x02) -> #(Index, interior(fs, offset, _))
+    Ok(0x02) -> #(Index, interior(fs, _))
     // A value of 5 (0x05) means the page is an interior table b-tree page.
-    Ok(0x05) -> #(Table, interior(fs, offset, _))
+    Ok(0x05) -> #(Table, interior(fs, _))
     // A value of 10 (0x0a) means the page is a leaf index b-tree page.
     Ok(0x0a) -> #(Index, leaf)
     // A value of 13 (0x0d) means the page is a leaf table b-tree page.
@@ -103,11 +103,11 @@ fn leaf(_: Nil) -> NodeType {
   Leaf
 }
 
-fn interior(fs: FileStream, offset: fn(Int) -> Int, _: Nil) -> NodeType {
+fn interior(fs: FileStream, _: Nil) -> NodeType {
   // 8	4	The four-byte page number at offset 8 is the right-most pointer.
   // This value appears in the header of interior b-tree pages only and is
   // omitted from all other pages.
-  let right_pointer = read32(fs) |> offset
+  let right_pointer = read32(fs)
   Interior(right_pointer:)
 }
 
